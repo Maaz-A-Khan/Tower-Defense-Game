@@ -1,9 +1,11 @@
 #include "enemy.hpp"
+#include <cmath>
 
 Enemy::Enemy(sf::Vector2f startPos)
-    : position(startPos), speed(120.f), health(100), currentNodeIndex(0), reachedGoal(false),
-      slowTimer(0), originalSpeed(speed)
+    : position(startPos), speed(120.f), health(100), currentNodeIndex(0), reachedGoal(false)
 {
+    slowTimer=0.f;
+    originalSpeed=speed;
 }
 
 void Enemy::setPath(const std::vector<Node*>& newPath) {
@@ -39,8 +41,8 @@ void Enemy::update(float deltaTime) {
 }
 
 void Enemy::draw(sf::RenderWindow& window) {
-    sf::CircleShape e(10);
-    e.setPosition(position);
+    sf::CircleShape e(10.f);
+    e.setPosition({position.x, position.y});
     window.draw(e);
 }
 
@@ -53,6 +55,6 @@ void Enemy::takeDamage(int dmg) {
 }
 
 void Enemy::applySlow(float slowMultiplier) {
-    speed = originalSpeed * slowMultiplier;
-    slowTimer = 3.0f; // 3 seconds slow 
+    speed=originalSpeed*slowMultiplier;
+    slowTimer=3.0f;
 }

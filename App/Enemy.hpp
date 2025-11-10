@@ -11,6 +11,9 @@ public:
     std::vector<Node*> path;
     int currentNodeIndex;
     bool reachedGoal;
+    // added for temporary slow effect support
+    float slowTimer;        // remaining slow duration (seconds)
+    float originalSpeed;    // cached base movement speed
 
     Enemy(sf::Vector2f startPos);
 
