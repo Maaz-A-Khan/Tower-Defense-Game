@@ -1,30 +1,46 @@
 #include "gatling_tower.hpp"
-#include <iostream>
+#include <cmath>
 
 GatlingTower::GatlingTower(sf::Vector2f pos)
-    : Tower(pos, 100.f, 10.f, 1.0f) // Example: range=100, damage=10, attackSpeed=1
+    : Tower(pos, 120.f, 1.5f, 100, false, TowerType::Gatling), damage(15.f)
 {
-    // Initialize the tower shape
     shape.setRadius(20.f);
     shape.setFillColor(sf::Color::Red);
-    shape.setOrigin(shape.getRadius(), shape.getRadius());
+    shape.setOrigin({shape.getRadius(), shape.getRadius()});
     shape.setPosition(position);
 }
 
-// Simple attack function (can be expanded later)
-void GatlingTower::attack() {
-    // This is a placeholder
-    std::cout << "Gatling Tower attacking with damage: " << damage << std::endl;
+void GatlingTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) {
+    if (cooldown > 0) {
+        cooldown -= deltaTime;
+        return;
+    }
+
+    // Find nearest enemy in range
+    Enemy* target = nullptr;
+    float minDistance = range * range; // squared distance for efficiency
+    
+    for (auto& enemy : enemies) {
+        if (enemy->isDead()) continue;
+        
+        sf::Vector2f enemyPos = enemy->getPosition();
+        float dx = position.x - enemyPos.x;
+        float dy = position.y - enemyPos.y;
+        float distanceSq = dx * dx + dy * dy;
+        
+        if (distanceSq <= minDistance) {
+            minDistance = distanceSq;
+            target = enemy.get();
+        }
+    }
+
+    // Attack if target found
+    if (target) {
+        target->takeDamage(static_cast<int>(damage));
+        cooldown = 1.0f / fireRate; // Reset cooldown based on fire rate
+    }
 }
 
-// Upgrade example (increase damage and range)
-void GatlingTower::upgrade() {
-    damage += 5.f;
-    range += 20.f;
-    std::cout << "Gatling Tower upgraded! Damage: " << damage << ", Range: " << range << std::endl;
-}
-
-// Draw the tower on window
-void GatlingTower::draw(sf::RenderWindow &window) {
+void GatlingTower::draw(sf::RenderWindow& window) {
     window.draw(shape);
 }
