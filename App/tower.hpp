@@ -1,25 +1,43 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <memory>
+#include "enemy.hpp"
 
+// Enumeration for tower types
+enum class TowerType {
+    Barrier,
+    Gatling,
+    Frost,
+    Artillery
+};
+
+// Abstract Tower base class
 class Tower {
 protected:
-    sf::Vector2f position;   // Tower position on the map
-    float range;             // Attack range
-    float damage;            // Damage per shot
-    float attackSpeed;       // Shots per second
-    float lastAttackTime;    // Time since last attack
+    sf::Vector2f position;
+    float range;
+    float fireRate;
+    float cooldown;
+    int cost;
+    bool isBlocking;
+    TowerType type;
 
 public:
-    Tower(sf::Vector2f pos, float r, float d, float speed);
+    Tower(sf::Vector2f pos, float range, float fireRate, int cost, bool isBlocking, TowerType type);
     virtual ~Tower() = default;
 
-    // Pure virtual functions to be implemented by derived classes
-    virtual void attack() = 0;               // Define attack behavior
-    virtual void upgrade() = 0;              // Define upgrade behavior
-    virtual void draw(sf::RenderWindow &window) = 0; // Render tower
+    // Core virtual methods
+    virtual void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) = 0;
+    virtual void draw(sf::RenderWindow& window) = 0;
 
-    // Getters
-    sf::Vector2f getPosition() const;
-    float getRange() const;
-    float getDamage() const;
+    // Utility
+    bool canAttack(Enemy* enemy);
+
+    // Accessors
+    const sf::Vector2f& getPosition() const { return position; }
+    float getRange() const { return range; }
+    bool getIsBlocking() const { return isBlocking; }
+    int getCost() const { return cost; }
+    TowerType getType() const { return type; }
 };
