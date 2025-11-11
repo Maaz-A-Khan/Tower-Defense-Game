@@ -1,29 +1,32 @@
 #pragma once
+
 #include <vector>
 #include <memory>
-#include "tower.hpp"
-#include "gatling_tower.hpp"
-#include "frost_tower.hpp"
-#include "barrier_tower.hpp"
-#include "artillery_tower.hpp"
 #include <SFML/Graphics.hpp>
+#include "tower.hpp"
+#include "projectile_manager.hpp"
+
+class Grid;
+class AStarPathfinder;
+class EnemyManager;
+class Enemy;
 
 class TowerManager {
 private:
-    std::vector<std::shared_ptr<Tower>> towers; // Store all towers
+    std::vector<std::unique_ptr<Tower>> towers;
+    Grid* grid;
+    AStarPathfinder* pathfinder;
+    EnemyManager* enemyManager;
+    ProjectileManager projectileManager;
+
+    sf::Vector2f gridToWorld(sf::Vector2i gridPos);
 
 public:
-    TowerManager() = default;
+    TowerManager(Grid* grid, AStarPathfinder* pathfinder, EnemyManager* enemyManager);
 
-    // Add towers
-    void addGatlingTower(sf::Vector2f pos);
-    void addFrostTower(sf::Vector2f pos);
-    void addBarrierTower(sf::Vector2f pos);
-    void addArtilleryTower(sf::Vector2f pos);
+    void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
+    void draw(sf::RenderWindow& window);
 
-    // Update all towers (attack)
-    void update();
-
-    // Draw all towers
-    void draw(sf::RenderWindow &window);
+    bool isOccupied(sf::Vector2i gridPos);
+    bool placeTower(TowerType type, sf::Vector2i gridPos);
 };
