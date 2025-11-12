@@ -88,15 +88,33 @@ void EnemyManager::clearDeadEnemies()
 
 void EnemyManager::recalculatePaths()
 {
-    Node *start = grid->getNode(grid->getStart().x, grid->getStart().y);
     Node *end = grid->getNode(grid->getEnd().x, grid->getEnd().y);
-    if (!start || !end)
+    if (!end)
         return;
 
-    cachedPath = pathfinder->findPath(start, end);
+    // Recalculate the cached path from start to end (for new spawns)
+    Node *start = grid->getNode(grid->getStart().x, grid->getStart().y);
+    if (start)
+        cachedPath = pathfinder->findPath(start, end);
 
+    // For each existing enemy, recalculate path from THEIR current position
     for (auto &enemy : enemies)
-        enemy->setPath(cachedPath);
+    {
+        // Get enemy's current grid position
+        sf::Vector2f enemyPos = enemy->getPosition();
+        int gridX = static_cast<int>(enemyPos.x / 32.0f);
+        int gridY = static_cast<int>(enemyPos.y / 32.0f);
+        
+        Node *enemyNode = grid->getNode(gridX, gridY);
+        if (!enemyNode)
+            continue;
+
+        // Find path from enemy's current position to the end
+        std::vector<Node*> newPath = pathfinder->findPath(enemyNode, end);
+        
+        if (!newPath.empty())
+            enemy->setPath(newPath);
+    }
 }
 
 bool EnemyManager::allEnemiesDefeated() const
