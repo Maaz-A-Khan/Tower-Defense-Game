@@ -1,9 +1,14 @@
 #include "artillery_tower.hpp"
+#include "projectile_manager.hpp"
+#include "enemy.hpp"
 #include <cmath>
 
-ArtilleryTower::ArtilleryTower(sf::Vector2f pos)
-    : Tower(pos, 200.f, 0.5f, 250, false, TowerType::Artillery), 
-      damage(50.f), splashRadius(60.f)
+ArtilleryTower::ArtilleryTower(sf::Vector2f pos, ProjectileManager* projManager)
+    : Tower(pos, 200.f, 0.5f, 250, false, TowerType::Artillery),
+      damage(50.f),
+      aoeRadius(60.f),
+      bulletSpeed(250.f),
+      projectileManager(projManager)
 {
     shape.setRadius(25.f);
     shape.setFillColor(sf::Color::Yellow);
@@ -17,7 +22,6 @@ void ArtilleryTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>
         return;
     }
 
-    // Find target enemy
     Enemy* target = nullptr;
     float minDistance = range * range;
     
@@ -35,26 +39,17 @@ void ArtilleryTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>
         }
     }
 
-    // Splash attack if target found
     if (target) {
-        sf::Vector2f explosionCenter = target->getPosition();
+        sf::Vector2f direction = target->getPosition() - position;
         
-        // Apply damage to all enemies within splash radius
-        for (auto& enemy : enemies) {
-            if (enemy->isDead()) continue;
-            
-            sf::Vector2f enemyPos = enemy->getPosition();
-            float dx = explosionCenter.x - enemyPos.x;
-            float dy = explosionCenter.y - enemyPos.y;
-            float distance = std::sqrt(dx * dx + dy * dy);
-            
-            if (distance <= splashRadius) {
-                // Damage falloff with distance
-                float damageMultiplier = 1.0f - (distance / splashRadius);
-                int finalDamage = static_cast<int>(damage * damageMultiplier);
-                enemy->takeDamage(finalDamage);
-            }
-        }
+        projectileManager->spawnProjectile(
+            position, 
+            direction, 
+            bulletSpeed, 
+            static_cast<int>(damage), 
+            aoeRadius,
+            target
+        );
         
         cooldown = 1.0f / fireRate;
     }
