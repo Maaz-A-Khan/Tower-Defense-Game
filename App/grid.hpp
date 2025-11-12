@@ -24,4 +24,10 @@ public:
     void resetCosts(); // NEW
 
     void draw(sf::RenderWindow& window);
+    
+    // Getter methods for start and end positions
+    sf::Vector2i getStart() const { return startCell; }
+    sf::Vector2i getEnd() const { return endCell; }
+    int getWidth() const { return width; }
+    int getHeight() const { return height; }
 };

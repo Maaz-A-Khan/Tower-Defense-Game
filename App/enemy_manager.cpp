@@ -1,5 +1,8 @@
 #include "enemy_manager.hpp"
 #include <cstdlib>
+#include <algorithm>
+
+
 
 EnemyManager::EnemyManager(Grid *grid, AStarPathfinder *pathfinder)
     : grid(grid), pathfinder(pathfinder),

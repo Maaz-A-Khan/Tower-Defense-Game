@@ -3,11 +3,11 @@
 #include "enemy.hpp"
 #include <cmath>
 
-GatlingTower::GatlingTower(sf::Vector2f pos, ProjectileManager* projManager)
+GatlingTower::GatlingTower(sf::Vector2f pos)
     : Tower(pos, 120.f, 1.5f, 100, false, TowerType::Gatling),
       damage(15.f),
       bulletSpeed(400.f),
-      projectileManager(projManager)
+      projectileManager(nullptr)
 {
     shape.setRadius(20.f);
     shape.setFillColor(sf::Color::Red);
@@ -20,6 +20,8 @@ void GatlingTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& 
         cooldown -= deltaTime;
         return;
     }
+    
+    if (!projectileManager) return; // Safety check
 
     Enemy* target = nullptr;
     float minDistance = range * range;

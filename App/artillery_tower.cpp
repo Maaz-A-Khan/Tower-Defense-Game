@@ -3,12 +3,12 @@
 #include "enemy.hpp"
 #include <cmath>
 
-ArtilleryTower::ArtilleryTower(sf::Vector2f pos, ProjectileManager* projManager)
+ArtilleryTower::ArtilleryTower(sf::Vector2f pos)
     : Tower(pos, 200.f, 0.5f, 250, false, TowerType::Artillery),
       damage(50.f),
       aoeRadius(60.f),
       bulletSpeed(250.f),
-      projectileManager(projManager)
+      projectileManager(nullptr)
 {
     shape.setRadius(25.f);
     shape.setFillColor(sf::Color::Yellow);
@@ -21,6 +21,8 @@ void ArtilleryTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>
         cooldown -= deltaTime;
         return;
     }
+    
+    if (!projectileManager) return; // Safety check
 
     Enemy* target = nullptr;
     float minDistance = range * range;

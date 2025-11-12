@@ -63,12 +63,18 @@ bool TowerManager::placeTower(TowerType type, sf::Vector2i gridPos) {
     sf::Vector2f worldPos = gridToWorld(gridPos);
 
     switch (type) {
-        case TowerType::Gatling:
-            towers.push_back(std::make_unique<GatlingTower>(worldPos));
+        case TowerType::Gatling: {
+            auto tower = std::make_unique<GatlingTower>(worldPos);
+            tower->setProjectileManager(&projectileManager);
+            towers.push_back(std::move(tower));
             break;
-        case TowerType::Artillery:
-            towers.push_back(std::make_unique<ArtilleryTower>(worldPos));
+        }
+        case TowerType::Artillery: {
+            auto tower = std::make_unique<ArtilleryTower>(worldPos);
+            tower->setProjectileManager(&projectileManager);
+            towers.push_back(std::move(tower));
             break;
+        }
         case TowerType::Frost: {
             auto frostTower = std::make_unique<FrostTower>(worldPos, grid, 100.f, 0.f, 150, 0.5f, 2);
             frostTower->applyFrostEffects(); 

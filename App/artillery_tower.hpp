@@ -10,9 +10,14 @@ private:
     float aoeRadius;
     float bulletSpeed;
     sf::CircleShape shape;
-    ProjectileManager* projectileManager;
+    
 public:
-    ArtilleryTower(sf::Vector2f pos, ProjectileManager* projManager);
+    ArtilleryTower(sf::Vector2f pos);
     void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) override;
     void draw(sf::RenderWindow& window) override;
+    
+    void setProjectileManager(ProjectileManager* pm) { projectileManager = pm; }
+
+protected:
+    ProjectileManager* projectileManager;
 };
