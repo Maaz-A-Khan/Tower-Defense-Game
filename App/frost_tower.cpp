@@ -1,26 +1,49 @@
 #include "frost_tower.hpp"
-#include <iostream>
+#include <cmath>
 
-FrostTower::FrostTower(sf::Vector2f pos)
-    : Tower(pos, 120.f, 5.f, 0.8f), slowAmount(0.5f) // range=120, damage=5, attackSpeed=0.8
+FrostTower::FrostTower(sf::Vector2f pos, Grid* grid, float range, float fireRate,
+                       int cost, float slowMultiplier, int aoeRangeCells)
+    : Tower(pos, range, fireRate, cost, true, TowerType::Frost),
+      slowMultiplier(slowMultiplier),
+      aoeRangeCells(aoeRangeCells),
+      pathCostIncrease(0.0f),
+      grid(grid)
 {
-    shape.setRadius(20.f);
-    shape.setFillColor(sf::Color::Blue);
-    shape.setOrigin(shape.getRadius(), shape.getRadius());
-    shape.setPosition(position);
+    aoeVisual.setSize(sf::Vector2f(aoeRangeCells * 2 * 32, aoeRangeCells * 2 * 32)); // assuming 32px cell
+    aoeVisual.setOrigin(aoeVisual.getSize() / 2.0f);
+    aoeVisual.setPosition(position);
+    aoeVisual.setFillColor(sf::Color(0, 150, 255, 60));
 }
 
-void FrostTower::attack() {
-    std::cout << "Frost Tower attacking! Slowing enemies by: " << slowAmount << std::endl;
+void FrostTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) {
+    // Apply AoE slow effect every frame (since frost towers are passive)
+    if (grid) {
+        applyFrostEffects();
+    }
+
+    // Update cooldown (even though FrostTower doesn't shoot)
+    if (cooldown > 0)
+        cooldown -= deltaTime;
 }
 
-void FrostTower::upgrade() {
-    damage += 2.f;
-    range += 20.f;
-    slowAmount += 0.1f;
-    std::cout << "Frost Tower upgraded! Damage: " << damage << ", Range: " << range << ", Slow: " << slowAmount << std::endl;
+void FrostTower::draw(sf::RenderWindow& window) {
+    // Draw AoE visualization
+    window.draw(aoeVisual);
+
+    // Optionally, draw tower core (simple circle)
+    sf::CircleShape towerBase(16);
+    towerBase.setOrigin({16.f, 16.f});
+    towerBase.setPosition(position);
+    towerBase.setFillColor(sf::Color(100, 180, 255));
+    window.draw(towerBase);
 }
 
-void FrostTower::draw(sf::RenderWindow &window) {
-    window.draw(shape);
+void FrostTower::applyFrostEffects() {
+    if (!grid) return;
+
+    // Convert world position to grid cell indices
+    int centerX = static_cast<int>(position.x / 32);
+    int centerY = static_cast<int>(position.y / 32);
+
+    grid->applyFrostEffect(centerX, centerY, aoeRangeCells, slowMultiplier);
 }

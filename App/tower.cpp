@@ -1,19 +1,21 @@
-#include "tower.hpp"
+#include "Tower.hpp"
+#include <cmath>
 
-Tower::Tower(sf::Vector2f pos, float r, float d, float speed)
-    : position(pos), range(r), damage(d), attackSpeed(speed), lastAttackTime(0.0f)
-{
-}
+Tower::Tower(sf::Vector2f pos, float range, float fireRate, int cost, bool isBlocking, TowerType type)
+    : position(pos),
+      range(range),
+      fireRate(fireRate),
+      cooldown(0.0f),
+      cost(cost),
+      isBlocking(isBlocking),
+      type(type)
+{}
 
-// Getters
-sf::Vector2f Tower::getPosition() const {
-    return position;
-}
-
-float Tower::getRange() const {
-    return range;
-}
-
-float Tower::getDamage() const {
-    return damage;
+bool Tower::canAttack(Enemy* enemy) {
+    if (!enemy) return false;
+    sf::Vector2f enemyPos = enemy->getPosition();
+    float dx = position.x - enemyPos.x;
+    float dy = position.y - enemyPos.y;
+    float distanceSq = dx * dx + dy * dy;
+    return distanceSq <= (range * range);
 }

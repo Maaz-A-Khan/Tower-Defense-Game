@@ -5,11 +5,13 @@
 class ArtilleryTower : public Tower {
 private:
     sf::CircleShape shape;
-    float splashRadius; // Explosive range
+    float damage;
+    float splashRadius;
+
 public:
     ArtilleryTower(sf::Vector2f pos);
 
-    void attack() override;
-    void upgrade() override;
-    void draw(sf::RenderWindow &window) override;
+    // Implement pure virtual functions from Tower
+    void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) override;
+    void draw(sf::RenderWindow& window) override;
 };
