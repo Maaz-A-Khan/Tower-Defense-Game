@@ -1,8 +1,13 @@
 #include "gatling_tower.hpp"
+#include "projectile_manager.hpp"
+#include "enemy.hpp"
 #include <cmath>
 
-GatlingTower::GatlingTower(sf::Vector2f pos)
-    : Tower(pos, 120.f, 1.5f, 100, false, TowerType::Gatling), damage(15.f)
+GatlingTower::GatlingTower(sf::Vector2f pos, ProjectileManager* projManager)
+    : Tower(pos, 120.f, 1.5f, 100, false, TowerType::Gatling),
+      damage(15.f),
+      bulletSpeed(400.f),
+      projectileManager(projManager)
 {
     shape.setRadius(20.f);
     shape.setFillColor(sf::Color::Red);
@@ -16,9 +21,8 @@ void GatlingTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& 
         return;
     }
 
-    // Find nearest enemy in range
     Enemy* target = nullptr;
-    float minDistance = range * range; // squared distance for efficiency
+    float minDistance = range * range;
     
     for (auto& enemy : enemies) {
         if (enemy->isDead()) continue;
@@ -34,10 +38,19 @@ void GatlingTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& 
         }
     }
 
-    // Attack if target found
     if (target) {
-        target->takeDamage(static_cast<int>(damage));
-        cooldown = 1.0f / fireRate; // Reset cooldown based on fire rate
+        sf::Vector2f direction = target->getPosition() - position;
+        
+        projectileManager->spawnProjectile(
+            position, 
+            direction, 
+            bulletSpeed, 
+            static_cast<int>(damage),
+            0.f,      // aoeRadius = 0
+            nullptr   // target = nullptr (fire-and-forget, not homing)
+        );
+
+        cooldown = 1.0f / fireRate;
     }
 }
 

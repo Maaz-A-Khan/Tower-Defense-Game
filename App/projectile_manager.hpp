@@ -1,17 +1,22 @@
-
 #pragma once
-#include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
-#include "projectile.hpp"
-#include "enemy.hpp"
+#include <SFML/Graphics.hpp>
+
+class Projectile;
+class Enemy;
 
 class ProjectileManager {
 private:
     std::vector<std::unique_ptr<Projectile>> projectiles;
 
 public:
-    void spawnProjectile(sf::Vector2f start, sf::Vector2f dir, float speed, int dmg);
+    ProjectileManager();
+
+    void spawnProjectile(sf::Vector2f start, sf::Vector2f dir, float speed, int dmg, float aoeRadius = 0.f, Enemy* target = nullptr);
     void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
     void draw(sf::RenderWindow& window);
+
+private:
+    void applyAoEDamage(sf::Vector2f center, float radius, int damage, std::vector<std::unique_ptr<Enemy>>& enemies);
 };

@@ -1,25 +1,26 @@
-
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "enemy.hpp"
-#include <memory>
+
+class Enemy;
 
 class Projectile {
-private:
+public:
     sf::Vector2f position;
     sf::Vector2f direction;
     float speed;
     int damage;
     bool active;
-    float radius = 5.f; // simple circular hitbox
+    
+    float aoeRadius;
+    Enemy* target;
 
-public:
-    Projectile(sf::Vector2f start, sf::Vector2f dir, float spd, int dmg);
+    sf::CircleShape shape;
+    static const float radius;
 
+    Projectile(sf::Vector2f start, sf::Vector2f dir, float speed, int dmg, float aoe = 0.f, Enemy* target = nullptr);
+    
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
-    bool checkCollision(Enemy& enemy);
-
-    bool isActive() const { return active; }
-    void deactivate() { active = false; }
+    
+    bool checkCollision(Enemy* enemy);
 };
