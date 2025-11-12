@@ -2,9 +2,9 @@
 #include <vector>
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include "projectile.hpp"  // Include full definition, not forward declaration
 
-class Projectile;
-class Enemy;
+class Enemy;  // Forward declaration is fine for pointers/references
 
 class ProjectileManager {
 private:

@@ -75,9 +75,13 @@ void EnemyManager::spawnEnemy()
 void EnemyManager::clearDeadEnemies()
 {
     enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
-                                 [](const std::unique_ptr<Enemy> &e)
+                                 [this](const std::unique_ptr<Enemy> &e)
                                  {
-                                     return e->isDead() || e->hasReachedGoal();
+                                     if (e->hasReachedGoal()) {
+                                         enemiesReachedGoal++;  // Count before removing
+                                         return true;
+                                     }
+                                     return e->isDead();
                                  }),
                   enemies.end());
 }
@@ -103,4 +107,11 @@ bool EnemyManager::allEnemiesDefeated() const
 const std::vector<std::unique_ptr<Enemy>> &EnemyManager::getEnemies() const
 {
     return enemies;
+}
+
+int EnemyManager::getReachedGoalCount()
+{
+    int count = enemiesReachedGoal;
+    enemiesReachedGoal = 0;  // Reset after reading
+    return count;
 }

@@ -18,6 +18,8 @@ private:
     float spawnInterval;
     int enemiesToSpawn;
     int enemiesSpawned;
+    
+    int enemiesReachedGoal = 0;  // Track enemies that reached goal this frame
 
 public:
     EnemyManager(Grid *grid, AStarPathfinder *pathfinder);
@@ -32,4 +34,5 @@ public:
 
     bool allEnemiesDefeated() const;
     const std::vector<std::unique_ptr<Enemy>> &getEnemies() const;
+    int getReachedGoalCount();  // Get and reset count of enemies that reached goal
 };
