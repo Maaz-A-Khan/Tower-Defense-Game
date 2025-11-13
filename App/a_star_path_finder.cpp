@@ -32,16 +32,27 @@ std::vector<Node*> AStarPathfinder::findPath(Node* start, Node* end) {
 
         closedSet.insert(current);
 
+        // Check all neighboring cells 
         for (Node* neighbor : grid->getNeighbors(current)) {
-            if (!neighbor->walkable || closedSet.count(neighbor)) continue;
+            // Skip if neighbor is blocked or already visited
+            if (!neighbor->walkable || closedSet.count(neighbor)) 
+                continue;
 
-            float moveCost = neighbor->getMovementCost(); 
-            float tentativeG = current->gCost + moveCost;
+            // Calculate cost to reach this neighbor from current node
+            float moveCost = neighbor->getMovementCost();  // Includes frost effect (if any)
+            float newCostToNeighbor = current->gCost + moveCost;
 
-            if (tentativeG < neighbor->gCost || neighbor->gCost == 0) {
-                neighbor->parent = current;
-                neighbor->gCost = tentativeG;
-                neighbor->hCost = calculateHCost(neighbor, end);
+            // If this path to neighbor is better than any previous path
+            bool isNewNode = (neighbor->gCost == 0);
+            bool isBetterPath = (newCostToNeighbor < neighbor->gCost);
+            
+            if (isNewNode || isBetterPath) {
+                // Update this neighbor's pathfinding data
+                neighbor->parent = current;              // Remember we came from 'current'
+                neighbor->gCost = newCostToNeighbor;     // Cost from start to neighbor
+                neighbor->hCost = calculateHCost(neighbor, end);  // Estimated cost to goal
+                
+                // Add to open set for evaluation
                 openSet.push(neighbor);
             }
         }
