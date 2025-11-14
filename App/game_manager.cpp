@@ -11,7 +11,7 @@ GameManager::GameManager()
       grid(GRID_WIDTH, GRID_HEIGHT),
       pathfinder(&grid),
       enemyManager(&grid, &pathfinder, &assetManager),
-      towerManager(&grid, &pathfinder, &enemyManager) {
+      towerManager(&grid, &pathfinder, &enemyManager, &assetManager) {
 
     // Load all assets
     assetManager.loadAllAssets();

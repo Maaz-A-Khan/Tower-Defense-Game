@@ -1,17 +1,29 @@
 #include "projectile_manager.hpp"
+#include "asset_manager.hpp"
 #include "projectile.hpp"
 #include "enemy.hpp"
 #include <algorithm>
 #include <cmath>
 
-ProjectileManager::ProjectileManager() {}
+ProjectileManager::ProjectileManager(AssetManager* assets) : assetManager(assets) {}
 
 void ProjectileManager::spawnProjectile(sf::Vector2f start, sf::Vector2f dir, float speed, int dmg, float aoeRadius, Enemy* target) {
     if (target == nullptr) { 
         float len = std::hypot(dir.x, dir.y);
         if (len != 0) dir /= len;
     }
-    projectiles.push_back(std::make_unique<Projectile>(start, dir, speed, dmg, aoeRadius, target));
+    auto projectile = std::make_unique<Projectile>(start, dir, speed, dmg, aoeRadius, target);
+    
+    // Apply texture if available
+    if (assetManager) {
+        if (aoeRadius > 0 && assetManager->hasTexture("aoe_projectile")) {
+            projectile->setTexture(assetManager->getTexture("aoe_projectile"));
+        } else if (assetManager->hasTexture("projectile")) {
+            projectile->setTexture(assetManager->getTexture("projectile"));
+        }
+    }
+    
+    projectiles.push_back(std::move(projectile));
 }
 
 void ProjectileManager::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) {

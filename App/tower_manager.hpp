@@ -10,6 +10,7 @@ class Grid;
 class AStarPathfinder;
 class EnemyManager;
 class Enemy;
+class AssetManager;
 
 class TowerManager {
 private:
@@ -18,11 +19,11 @@ private:
     AStarPathfinder* pathfinder;
     EnemyManager* enemyManager;
     ProjectileManager projectileManager;
-
+    AssetManager* assetManager;
     sf::Vector2f gridToWorld(sf::Vector2i gridPos);
 
 public:
-    TowerManager(Grid* grid, AStarPathfinder* pathfinder, EnemyManager* enemyManager);
+    TowerManager(Grid* grid, AStarPathfinder* pathfinder, EnemyManager* enemyManager, AssetManager* assets = nullptr);
 
     void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
     void draw(sf::RenderWindow& window);

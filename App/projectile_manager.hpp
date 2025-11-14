@@ -5,13 +5,15 @@
 #include "projectile.hpp"  // Include full definition, not forward declaration
 
 class Enemy;  // Forward declaration is fine for pointers/references
+class AssetManager;
 
 class ProjectileManager {
 private:
     std::vector<std::unique_ptr<Projectile>> projectiles;
+    AssetManager* assetManager;
 
 public:
-    ProjectileManager();
+    ProjectileManager(AssetManager* assets = nullptr);
 
     void spawnProjectile(sf::Vector2f start, sf::Vector2f dir, float speed, int dmg, float aoeRadius = 0.f, Enemy* target = nullptr);
     void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
