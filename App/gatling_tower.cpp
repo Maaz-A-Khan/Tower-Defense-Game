@@ -57,5 +57,9 @@ void GatlingTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& 
 }
 
 void GatlingTower::draw(sf::RenderWindow& window) {
-    window.draw(shape);
+    if (sprite) {
+        window.draw(*sprite);
+    } else {
+        window.draw(shape);
+    }
 }

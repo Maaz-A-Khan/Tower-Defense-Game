@@ -6,11 +6,14 @@
 #include "a_star_path_finder.hpp"
 #include "grid.hpp"
 
+class AssetManager;  // Forward declaration
+
 class EnemyManager
 {
 private:
     Grid *grid;
     AStarPathfinder *pathfinder;
+    AssetManager *assetManager;  // Add asset manager pointer
     std::vector<std::unique_ptr<Enemy>> enemies;
     std::vector<Node *> cachedPath;
 
@@ -22,7 +25,7 @@ private:
     int enemiesReachedGoal = 0;  // Track enemies that reached goal this frame
 
 public:
-    EnemyManager(Grid *grid, AStarPathfinder *pathfinder);
+    EnemyManager(Grid *grid, AStarPathfinder *pathfinder, AssetManager *assets = nullptr);
 
     void update(float deltaTime);
     void draw(sf::RenderWindow &window);

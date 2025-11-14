@@ -1,18 +1,23 @@
 #include "enemy_manager.hpp"
+#include "asset_manager.hpp"
 #include <cstdlib>
 #include <algorithm>
+#include <iostream>
 
 
-
-EnemyManager::EnemyManager(Grid *grid, AStarPathfinder *pathfinder)
-    : grid(grid), pathfinder(pathfinder),
+EnemyManager::EnemyManager(Grid *grid, AStarPathfinder *pathfinder, AssetManager *assets)
+    : grid(grid), pathfinder(pathfinder), assetManager(assets),
       spawnInterval(2.0f), enemiesToSpawn(0), enemiesSpawned(0)
 {
     // Compute initial global path
     Node *start = grid->getNode(grid->getStart().x, grid->getStart().y);
     Node *end = grid->getNode(grid->getEnd().x, grid->getEnd().y);
-    if (start && end)
+    if (start && end) {
         cachedPath = pathfinder->findPath(start, end);
+        std::cout << "Initial path calculated. Path size: " << cachedPath.size() << std::endl;
+    } else {
+        std::cout << "Error: Start or End node is null!" << std::endl;
+    }
 }
 
 void EnemyManager::update(float deltaTime)
@@ -45,8 +50,25 @@ void EnemyManager::spawnWave(int count, float interval)
 
 void EnemyManager::spawnEnemy()
 {
+    // Don't spawn if we don't have a valid path
     if (cachedPath.empty())
-        return;
+    {
+        std::cout << "Warning: Cannot spawn enemy - no valid path! Recalculating..." << std::endl;
+        
+        // Try to recalculate path
+        Node *start = grid->getNode(grid->getStart().x, grid->getStart().y);
+        Node *end = grid->getNode(grid->getEnd().x, grid->getEnd().y);
+        if (start && end) {
+            cachedPath = pathfinder->findPath(start, end);
+            std::cout << "Recalculated path. Path size: " << cachedPath.size() << std::endl;
+        }
+        
+        // If still no path, we can't spawn
+        if (cachedPath.empty()) {
+            std::cout << "Still no path available. Cannot spawn enemies." << std::endl;
+            return;  // Don't decrement enemiesToSpawn - try again next frame
+        }
+    }
 
     int type = std::rand() % 4;
     std::unique_ptr<Enemy> e;
@@ -55,15 +77,27 @@ void EnemyManager::spawnEnemy()
     {
     case 0:
         e = std::make_unique<NormalEnemy>(cachedPath);
+        if (assetManager && assetManager->hasTexture("normal_enemy")) {
+            e->setTexture(assetManager->getTexture("normal_enemy"));
+        }
         break;
     case 1:
         e = std::make_unique<FastEnemy>(cachedPath);
+        if (assetManager && assetManager->hasTexture("fast_enemy")) {
+            e->setTexture(assetManager->getTexture("fast_enemy"));
+        }
         break;
     case 2:
         e = std::make_unique<TankEnemy>(cachedPath);
+        if (assetManager && assetManager->hasTexture("tank_enemy")) {
+            e->setTexture(assetManager->getTexture("tank_enemy"));
+        }
         break;
     case 3:
         e = std::make_unique<ShieldEnemy>(cachedPath);
+        if (assetManager && assetManager->hasTexture("shield_enemy")) {
+            e->setTexture(assetManager->getTexture("shield_enemy"));
+        }
         break;
     }
 

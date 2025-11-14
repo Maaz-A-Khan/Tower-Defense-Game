@@ -5,7 +5,8 @@
 #include "a_star_path_finder.hpp"
 #include "enemy_manager.hpp"
 #include "tower_manager.hpp"
-#include "projectile_manager.hpp"
+#include "asset_manager.hpp"
+#include "ui_manager.hpp"
 #include "tower.hpp"
 
 enum class GameState {
@@ -21,6 +22,9 @@ class GameManager {
 private:
     // === Core systems ===
     sf::RenderWindow window;
+    AssetManager assetManager;
+    UIManager* uiManager;  // Pointer because it needs font from AssetManager
+    
     Grid grid;
     AStarPathfinder pathfinder;
     EnemyManager enemyManager;
@@ -42,12 +46,6 @@ private:
     int playerLives = 20;
     const int TOWER_COSTS[4] = {50, 100, 150, 250};
 
-    // === UI ===
-    sf::Font font;
-    std::optional<sf::Text> moneyText;
-    std::optional<sf::Text> livesText;
-    std::optional<sf::Text> waveText;
-
     // === Tower selection ===
     TowerType selectedTower = TowerType::Barrier;
 
@@ -60,6 +58,7 @@ private:
 public:
     // === Constructor / lifecycle ===
     GameManager();
+    ~GameManager();
     void run();
 
 private:
@@ -83,10 +82,6 @@ private:
     sf::Vector2i screenToGrid(sf::Vector2i mousePos) const;
     sf::Vector2f gridToWorld(sf::Vector2i gridPos) const;
     sf::Vector2i worldToGrid(sf::Vector2f worldPos) const;
-
-    // === UI rendering ===
-    void drawUI() const;
-    void drawTowerPreview() const;
 
     // === Game state handling ===
     void changeState(GameState newState);

@@ -1,8 +1,9 @@
 #include "grid.hpp"
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
-Grid::Grid(int w, int h) {
+Grid::Grid(int w, int h) : gridTexture(nullptr) {
     initialize(w, h);
 }
 
@@ -18,6 +19,12 @@ void Grid::initialize(int w, int h) {
             nodes[y][x].slowMultiplier = 1.0f;
         }
     }
+}
+
+void Grid::setTexture(sf::Texture& texture) {
+    gridTexture = &texture;
+    
+    std::cout << "Grid texture set: " << texture.getSize().x << "x" << texture.getSize().y << std::endl;
 }
 
 Node* Grid::getNode(int x, int y) {
@@ -84,25 +91,54 @@ void Grid::resetCosts() {
 
 void Grid::draw(sf::RenderWindow& window) {
     float cellSize = 32.f;
-    sf::RectangleShape rect(sf::Vector2f(cellSize - 1, cellSize - 1));
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             Node& node = nodes[y][x];
 
-            if (!node.walkable)
-                rect.setFillColor(sf::Color::Black);
-            else if (sf::Vector2i(x, y) == startCell)
-                rect.setFillColor(sf::Color::Green);
-            else if (sf::Vector2i(x, y) == endCell)
-                rect.setFillColor(sf::Color::Red);
-            else if (node.slowMultiplier > 1.0f)
-                rect.setFillColor(sf::Color(100, 180, 255)); 
-            else
-                rect.setFillColor(sf::Color(200, 200, 200));
+            // Draw the grid texture if available
+            if (gridTexture) {
+                sf::Sprite gridSprite(*gridTexture);  // Create sprite each time
+                gridSprite.setPosition({x * cellSize, y * cellSize});
+                
+                // Scale to cell size
+                sf::Vector2u texSize = gridTexture->getSize();
+                float scaleX = cellSize / texSize.x;
+                float scaleY = cellSize / texSize.y;
+                gridSprite.setScale({scaleX, scaleY});
+                
+                // Tint the sprite based on tile type
+                if (!node.walkable) {
+                    gridSprite.setColor(sf::Color(50, 50, 50));  // Dark for obstacles
+                } else if (sf::Vector2i(x, y) == startCell) {
+                    gridSprite.setColor(sf::Color(0, 255, 0, 200));  // Green for start
+                } else if (sf::Vector2i(x, y) == endCell) {
+                    gridSprite.setColor(sf::Color(255, 0, 0, 200));  // Red for end
+                } else if (node.slowMultiplier > 1.0f) {
+                    gridSprite.setColor(sf::Color(100, 180, 255));  // Blue for frost
+                } else {
+                    gridSprite.setColor(sf::Color::White);  // Normal
+                }
+                
+                window.draw(gridSprite);
+            } else {
+                // Fallback to rectangle rendering if no texture
+                sf::RectangleShape rect({cellSize - 1, cellSize - 1});
+                
+                if (!node.walkable)
+                    rect.setFillColor(sf::Color::Black);
+                else if (sf::Vector2i(x, y) == startCell)
+                    rect.setFillColor(sf::Color::Green);
+                else if (sf::Vector2i(x, y) == endCell)
+                    rect.setFillColor(sf::Color::Red);
+                else if (node.slowMultiplier > 1.0f)
+                    rect.setFillColor(sf::Color(100, 180, 255)); 
+                else
+                    rect.setFillColor(sf::Color(200, 200, 200));
 
-            rect.setPosition({x * cellSize, y * cellSize});
-            window.draw(rect);
+                rect.setPosition({x * cellSize, y * cellSize});
+                window.draw(rect);
+            }
         }
     }
 }

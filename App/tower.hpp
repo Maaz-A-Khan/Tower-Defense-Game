@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
+#include <optional>
 #include "enemy.hpp"
 
 // Enumeration for tower types
@@ -22,6 +23,8 @@ protected:
     int cost;
     bool isBlocking;
     TowerType type;
+    
+    std::optional<sf::Sprite> sprite;  // Optional sprite for textured towers
 
 public:
     Tower(sf::Vector2f pos, float range, float fireRate, int cost, bool isBlocking, TowerType type);
@@ -31,6 +34,9 @@ public:
     virtual void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) = 0;
     virtual void draw(sf::RenderWindow& window) = 0;
 
+    // Texture support
+    void setTexture(sf::Texture& texture);
+    
     // Utility
     bool canAttack(Enemy* enemy);
 

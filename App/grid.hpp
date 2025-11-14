@@ -7,12 +7,14 @@ class Grid {
 private:
     int width, height;
     std::vector<std::vector<Node>> nodes;
+    sf::Texture* gridTexture;  // Pointer to texture from AssetManager
 
 public:
     sf::Vector2i startCell, endCell;
 
     Grid(int w, int h);
     void initialize(int w, int h);
+    void setTexture(sf::Texture& texture);  // Set the grid tile texture
     Node* getNode(int x, int y);
     std::vector<Node*> getNeighbors(Node* node);
     bool isWalkable(int x, int y);

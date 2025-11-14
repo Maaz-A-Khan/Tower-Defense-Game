@@ -6,38 +6,35 @@ GameManager::GameManager()
     : window(sf::VideoMode({GRID_WIDTH * CELL_SIZE + UI_PANEL_WIDTH,
                            GRID_HEIGHT * CELL_SIZE}),
              "Tower Defense"),
+      assetManager(),
+      uiManager(nullptr),
       grid(GRID_WIDTH, GRID_HEIGHT),
       pathfinder(&grid),
-      enemyManager(&grid, &pathfinder),
+      enemyManager(&grid, &pathfinder, &assetManager),
       towerManager(&grid, &pathfinder, &enemyManager) {
 
-    // Load UI font FIRST
-    if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
-        std::cerr << "Warning: Could not load font!" << std::endl;
-    }
+    // Load all assets
+    assetManager.loadAllAssets();
 
-    // NOW initialize Text objects with loaded font
-    moneyText.emplace(font);
-    livesText.emplace(font);
-    waveText.emplace(font);
+    // Create UI Manager with the loaded font
+    uiManager = new UIManager(assetManager.getFont("main_font"));
+
+    // Set grid texture if available
+    if (assetManager.hasTexture("grid_tile")) {
+        grid.setTexture(assetManager.getTexture("grid_tile"));
+    }
 
     // Set start/end points for pathfinding
     grid.setStartEnd({0, GRID_HEIGHT / 2}, {GRID_WIDTH - 1, GRID_HEIGHT / 2});
-
-    // UI setup
-    moneyText->setCharacterSize(20);
-    moneyText->setFillColor(sf::Color::Yellow);
-    moneyText->setPosition({10.f, 10.f});
-
-    livesText->setCharacterSize(20);
-    livesText->setFillColor(sf::Color::Red);
-    livesText->setPosition({10.f, 40.f});
-
-    waveText->setCharacterSize(20);
-    waveText->setFillColor(sf::Color::Cyan);
-    waveText->setPosition({10.f, 70.f});
+    
+    // Recalculate paths now that start/end are set
+    enemyManager.recalculatePaths();
 
     currentState = GameState::PLAYING;
+}
+
+GameManager::~GameManager() {
+    delete uiManager;
 }
 
 void GameManager::run() {
@@ -93,7 +90,8 @@ void GameManager::update(float dt) {
     checkLivesLost();
     checkWinLoss();
 
-    if (enemyManager.allEnemiesDefeated()) {
+    // Only auto-start next wave if we've actually started playing (currentWave > 0)
+    if (currentWave > 0 && enemyManager.allEnemiesDefeated()) {
         waveCompleteTimer += dt;
         if (waveCompleteTimer > 3.0f) {
             startNextWave();
@@ -101,10 +99,9 @@ void GameManager::update(float dt) {
         }
     }
 
-    // Update UI text
-    moneyText->setString("Money: " + std::to_string(playerMoney));
-    livesText->setString("Lives: " + std::to_string(playerLives));
-    waveText->setString("Wave: " + std::to_string(currentWave));
+    // Update UI with current game state
+    int selectedTowerCost = TOWER_COSTS[static_cast<int>(selectedTower)];
+    uiManager->update(playerMoney, playerLives, currentWave, selectedTower, selectedTowerCost);
 }
 
 void GameManager::render() {
@@ -114,19 +111,32 @@ void GameManager::render() {
     towerManager.draw(window);
     enemyManager.draw(window);
 
-    drawUI();
-    drawTowerPreview();
+    // Draw UI
+    uiManager->draw(window);
+    uiManager->drawInstructions(window);
+    
+    // Draw tower preview
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    sf::Vector2i gridPos = screenToGrid(mousePos);
+    bool canPlace = !towerManager.isOccupied(gridPos) && canAfford(selectedTower);
+    uiManager->drawTowerPreview(window, gridPos, canPlace);
 
     window.display();
 }
 
 // === Logic Helpers ===
 void GameManager::startNextWave() {
+    // Don't start a new wave if enemies are still active or being spawned
+    if (!enemyManager.allEnemiesDefeated()) {
+        return;
+    }
+    
     currentWave++;
     int enemyCount = 5 + (currentWave * 3);
     float spawnInterval = std::max(0.5f, 2.0f - (currentWave * 0.1f));
     enemyManager.spawnWave(enemyCount, spawnInterval);
     playerMoney += 100;
+    waveCompleteTimer = 0.0f;  // Reset timer when manually starting wave
 }
 
 void GameManager::checkLivesLost() {
@@ -172,26 +182,16 @@ sf::Vector2i GameManager::worldToGrid(sf::Vector2f worldPos) const {
     return sf::Vector2i(worldPos.x / CELL_SIZE, worldPos.y / CELL_SIZE);
 }
 
-// === UI ===
-void GameManager::drawUI() const {
-    // Need to cast away const because SFML 3.0.2 draw is non-const
-    auto& nonConstWindow = const_cast<sf::RenderWindow&>(window);
-    nonConstWindow.draw(*moneyText);
-    nonConstWindow.draw(*livesText);
-    nonConstWindow.draw(*waveText);
-}
-
-void GameManager::drawTowerPreview() const {
-    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    sf::Vector2i gridPos = screenToGrid(mousePos);
-    sf::RectangleShape preview({CELL_SIZE - 2.f, CELL_SIZE - 2.f});
-    preview.setPosition({gridPos.x * CELL_SIZE + 1.f, gridPos.y * CELL_SIZE + 1.f});
-    preview.setFillColor(sf::Color(0, 255, 0, 100));
-    auto& nonConstWindow = const_cast<sf::RenderWindow&>(window);
-    nonConstWindow.draw(preview);
-}
-
-// === State Handling ===
+// === Game state handling ===
 void GameManager::changeState(GameState newState) {
     currentState = newState;
+}
+
+bool GameManager::canAfford(TowerType type) const {
+    int cost = TOWER_COSTS[static_cast<int>(type)];
+    return playerMoney >= cost;
+}
+
+int GameManager::getTowerCost(TowerType type) const {
+    return TOWER_COSTS[static_cast<int>(type)];
 }

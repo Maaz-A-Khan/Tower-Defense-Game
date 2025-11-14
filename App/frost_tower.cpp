@@ -30,12 +30,16 @@ void FrostTower::draw(sf::RenderWindow& window) {
     // Draw AoE visualization
     window.draw(aoeVisual);
 
-    // Optionally, draw tower core (simple circle)
-    sf::CircleShape towerBase(16);
-    towerBase.setOrigin({16.f, 16.f});
-    towerBase.setPosition(position);
-    towerBase.setFillColor(sf::Color(100, 180, 255));
-    window.draw(towerBase);
+    // Draw tower sprite or fallback to circle
+    if (sprite) {
+        window.draw(*sprite);
+    } else {
+        sf::CircleShape towerBase(16);
+        towerBase.setOrigin({16.f, 16.f});
+        towerBase.setPosition(position);
+        towerBase.setFillColor(sf::Color(100, 180, 255));
+        window.draw(towerBase);
+    }
 }
 
 void FrostTower::applyFrostEffects() {

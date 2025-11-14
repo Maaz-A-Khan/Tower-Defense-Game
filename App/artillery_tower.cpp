@@ -58,5 +58,9 @@ void ArtilleryTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>
 }
 
 void ArtilleryTower::draw(sf::RenderWindow& window) {
-    window.draw(shape);
+    if (sprite) {
+        window.draw(*sprite);
+    } else {
+        window.draw(shape);
+    }
 }

@@ -33,6 +33,11 @@ void Projectile::update(float deltaTime) {
     position += direction * speed * deltaTime;
     shape.setPosition(position);
     
+    // Update sprite position if using texture
+    if (sprite) {
+        sprite->setPosition(position);
+    }
+    
     if (position.x < -50 || position.x > 1000 || position.y < -50 || position.y > 800) {
         active = false;
     }
@@ -40,8 +45,21 @@ void Projectile::update(float deltaTime) {
 
 void Projectile::draw(sf::RenderWindow& window) {
     if (active) {
-        window.draw(shape);
+        if (sprite) {
+            window.draw(*sprite);
+        } else {
+            window.draw(shape);
+        }
     }
+}
+
+void Projectile::setTexture(sf::Texture& texture) {
+    sprite.emplace(texture);
+    
+    // Center the sprite origin
+    sf::Vector2u texSize = texture.getSize();
+    sprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
+    sprite->setPosition(position);
 }
 
 bool Projectile::checkCollision(Enemy* enemy) {

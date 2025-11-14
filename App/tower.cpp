@@ -19,3 +19,12 @@ bool Tower::canAttack(Enemy* enemy) {
     float distanceSq = dx * dx + dy * dy;
     return distanceSq <= (range * range);
 }
+
+void Tower::setTexture(sf::Texture& texture) {
+    sprite.emplace(texture);
+    
+    // Center the sprite origin
+    sf::Vector2u texSize = texture.getSize();
+    sprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
+    sprite->setPosition(position);
+}
