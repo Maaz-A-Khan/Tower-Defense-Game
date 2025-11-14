@@ -90,7 +90,7 @@ void Grid::resetCosts() {
 }
 
 void Grid::draw(sf::RenderWindow& window) {
-    float cellSize = 32.f;
+    float cellSize = 48.f;  // Match CELL_SIZE constant
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {

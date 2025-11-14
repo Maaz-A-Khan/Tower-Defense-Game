@@ -8,8 +8,8 @@ UIManager::UIManager(sf::Font& font) {
     selectedTowerText.emplace(font);
     instructionsText.emplace(font);
 
-    // UI elements positioned on the right side (grid is 640px wide)
-    float uiX = 660.f;  // 20px padding from grid edge
+    // UI elements positioned on the right side (grid is 960px wide with 48px cells)
+    float uiX = 980.f;  // 20px padding from grid edge
 
     // Setup money text
     moneyText->setCharacterSize(20);
@@ -38,7 +38,7 @@ UIManager::UIManager(sf::Font& font) {
     instructionsText->setString("Controls:\n1-4: Select Tower\nSpace: Start Wave\nEsc: Pause");
 
     // Setup tower preview shape
-    towerPreview.setSize({32.f - 2.f, 32.f - 2.f});
+    towerPreview.setSize({48.f - 2.f, 48.f - 2.f});
 }
 
 void UIManager::update(int money, int lives, int wave, TowerType selectedTower, int selectedTowerCost) {
@@ -67,7 +67,7 @@ void UIManager::drawTowerPreview(sf::RenderWindow& window, sf::Vector2i gridPos,
     
     // Create a temporary preview (we can't modify member in const function)
     sf::RectangleShape preview = towerPreview;
-    preview.setPosition({gridPos.x * 32.f + 1.f, gridPos.y * 32.f + 1.f});
+    preview.setPosition({gridPos.x * 48.f + 1.f, gridPos.y * 48.f + 1.f});
     
     // Green if can place, red if cannot
     if (canPlace) {

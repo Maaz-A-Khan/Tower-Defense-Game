@@ -52,8 +52,8 @@ private:
     // === Window dimensions ===
     static constexpr int GRID_WIDTH = 20;
     static constexpr int GRID_HEIGHT = 15;
-    static constexpr int CELL_SIZE = 32;
-    static constexpr int UI_PANEL_WIDTH = 200;
+    static constexpr int CELL_SIZE = 48;  // Increased for better visibility
+    static constexpr int UI_PANEL_WIDTH = 280;  // Wider panel for longer text
 
 public:
     // === Constructor / lifecycle ===

@@ -4,7 +4,7 @@
 #include <cmath>
 
 ArtilleryTower::ArtilleryTower(sf::Vector2f pos)
-    : Tower(pos, 200.f, 0.5f, 250, false, TowerType::Artillery),
+    : Tower(pos, 200.f, 0.5f, 250, true, TowerType::Artillery),
       damage(50.f),
       aoeRadius(60.f),
       bulletSpeed(250.f),
@@ -43,6 +43,8 @@ void ArtilleryTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>
 
     if (target) {
         sf::Vector2f direction = target->getPosition() - position;
+        float len = std::hypot(direction.x, direction.y);
+        if (len != 0) direction /= len;
         
         projectileManager->spawnProjectile(
             position, 
@@ -50,7 +52,7 @@ void ArtilleryTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>
             bulletSpeed, 
             static_cast<int>(damage), 
             aoeRadius,
-            target
+            nullptr  // Fire-and-forget, not homing
         );
         
         cooldown = 1.0f / fireRate;

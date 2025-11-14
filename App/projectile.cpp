@@ -22,14 +22,7 @@ Projectile::Projectile(sf::Vector2f start, sf::Vector2f dir, float spd, int dmg,
 void Projectile::update(float deltaTime) {
     if (!active) return;
 
-    if (target && !target->isDead()) {
-        sf::Vector2f dirToTarget = target->getPosition() - position;
-        float len = std::hypot(dirToTarget.x, dirToTarget.y);
-        if (len != 0) {
-            direction = dirToTarget / len;
-        }
-    }
-    
+    // Projectiles move in a straight line, no homing
     position += direction * speed * deltaTime;
     shape.setPosition(position);
     
@@ -60,6 +53,12 @@ void Projectile::setTexture(sf::Texture& texture) {
     sf::Vector2u texSize = texture.getSize();
     sprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
     sprite->setPosition(position);
+    
+    // Scale sprite to fit projectile size (10x10 for normal, larger for AOE)
+    float targetSize = (aoeRadius > 0) ? 20.f : 10.f;
+    float scaleX = targetSize / texSize.x;
+    float scaleY = targetSize / texSize.y;
+    sprite->setScale({scaleX, scaleY});
 }
 
 bool Projectile::checkCollision(Enemy* enemy) {

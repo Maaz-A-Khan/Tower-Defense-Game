@@ -16,7 +16,7 @@ TowerManager::TowerManager(Grid* grid, AStarPathfinder* pathfinder, EnemyManager
 }
 
 sf::Vector2f TowerManager::gridToWorld(sf::Vector2i gridPos) {
-    return sf::Vector2f(gridPos.x * 32.f + 16.f, gridPos.y * 32.f + 16.f);
+    return sf::Vector2f(gridPos.x * 48.f + 24.f, gridPos.y * 48.f + 24.f);
 }
 
 void TowerManager::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) {
@@ -34,10 +34,17 @@ void TowerManager::draw(sf::RenderWindow& window) {
 }
 
 bool TowerManager::isOccupied(sf::Vector2i gridPos) {
+    // Check if this cell already has a tower
+    if (occupiedCells.count({gridPos.x, gridPos.y})) {
+        return true;
+    }
+    
     Node* node = grid->getNode(gridPos.x, gridPos.y);
     if (!node) {
         return true; 
     }
+    
+    // Check if the node is blocked by something else (like a barrier)
     return !node->walkable;
 }
 
@@ -51,15 +58,25 @@ bool TowerManager::placeTower(TowerType type, sf::Vector2i gridPos) {
         return false; 
     }
 
-    grid->setObstacle(gridPos.x, gridPos.y, true);
+    // Determine if this tower type is blocking
+    bool isBlockingTower = (type == TowerType::Barrier || type == TowerType::Gatling || type == TowerType::Artillery);
+    
+    // Only block the grid cell if the tower is blocking
+    if (isBlockingTower) {
+        grid->setObstacle(gridPos.x, gridPos.y, true);
 
-    std::vector<Node*> path = pathfinder->findPath(grid->getNode(grid->startCell.x, grid->startCell.y), 
-                                                grid->getNode(grid->endCell.x, grid->endCell.y));
+        // Validate that a path still exists from start to end
+        std::vector<Node*> path = pathfinder->findPath(grid->getNode(grid->startCell.x, grid->startCell.y), 
+                                                    grid->getNode(grid->endCell.x, grid->endCell.y));
 
-    if (path.empty()) {
-        grid->setObstacle(gridPos.x, gridPos.y, false);
-        return false;
+        if (path.empty()) {
+            grid->setObstacle(gridPos.x, gridPos.y, false);
+            return false;
+        }
     }
+    
+    // Mark cell as occupied by a tower
+    occupiedCells.insert({gridPos.x, gridPos.y});
 
     sf::Vector2f worldPos = gridToWorld(gridPos);
 

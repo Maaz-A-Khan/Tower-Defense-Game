@@ -3,13 +3,13 @@
 
 FrostTower::FrostTower(sf::Vector2f pos, Grid* grid, float range, float fireRate,
                        int cost, float slowMultiplier, int aoeRangeCells)
-    : Tower(pos, range, fireRate, cost, true, TowerType::Frost),
+    : Tower(pos, range, fireRate, cost, false, TowerType::Frost),
       slowMultiplier(slowMultiplier),
       aoeRangeCells(aoeRangeCells),
       pathCostIncrease(0.0f),
       grid(grid)
 {
-    aoeVisual.setSize(sf::Vector2f(aoeRangeCells * 2 * 32, aoeRangeCells * 2 * 32)); // assuming 32px cell
+    aoeVisual.setSize(sf::Vector2f(aoeRangeCells * 2 * 48.f, aoeRangeCells * 2 * 48.f));
     aoeVisual.setOrigin(aoeVisual.getSize() / 2.0f);
     aoeVisual.setPosition(position);
     aoeVisual.setFillColor(sf::Color(0, 150, 255, 60));
@@ -46,8 +46,8 @@ void FrostTower::applyFrostEffects() {
     if (!grid) return;
 
     // Convert world position to grid cell indices
-    int centerX = static_cast<int>(position.x / 32);
-    int centerY = static_cast<int>(position.y / 32);
+    int centerX = static_cast<int>(position.x / 48);
+    int centerY = static_cast<int>(position.y / 48);
 
     grid->applyFrostEffect(centerX, centerY, aoeRangeCells, slowMultiplier);
 }

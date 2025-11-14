@@ -27,4 +27,9 @@ void Tower::setTexture(sf::Texture& texture) {
     sf::Vector2u texSize = texture.getSize();
     sprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
     sprite->setPosition(position);
+    
+    // Scale sprite to fit cell size (48x48)
+    float scaleX = 48.f / texSize.x;
+    float scaleY = 48.f / texSize.y;
+    sprite->setScale({scaleX, scaleY});
 }

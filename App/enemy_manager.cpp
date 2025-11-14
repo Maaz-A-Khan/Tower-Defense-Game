@@ -136,8 +136,8 @@ void EnemyManager::recalculatePaths()
     {
         // Get enemy's current grid position
         sf::Vector2f enemyPos = enemy->getPosition();
-        int gridX = static_cast<int>(enemyPos.x / 32.0f);
-        int gridY = static_cast<int>(enemyPos.y / 32.0f);
+        int gridX = static_cast<int>(enemyPos.x / 48.0f);
+        int gridY = static_cast<int>(enemyPos.y / 48.0f);
         
         Node *enemyNode = grid->getNode(gridX, gridY);
         if (!enemyNode)

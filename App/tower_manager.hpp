@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <set>
 #include <SFML/Graphics.hpp>
 #include "tower.hpp"
 #include "projectile_manager.hpp"
@@ -15,6 +16,7 @@ class AssetManager;
 class TowerManager {
 private:
     std::vector<std::unique_ptr<Tower>> towers;
+    std::set<std::pair<int, int>> occupiedCells;  // Track cells with towers
     Grid* grid;
     AStarPathfinder* pathfinder;
     EnemyManager* enemyManager;

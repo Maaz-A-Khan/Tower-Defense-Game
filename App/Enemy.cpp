@@ -10,7 +10,7 @@ Enemy::Enemy(const std::vector<Node*>& path, float speed, int health)
       currentNodeIndex(0), reachedGoal(false)
 {
     if (!path.empty()) {
-        position = sf::Vector2f(path[0]->x * 32.f + 16.f, path[0]->y * 32.f + 16.f);
+        position = sf::Vector2f(path[0]->x * 48.f + 24.f, path[0]->y * 48.f + 24.f);
     }
 
     shape.setRadius(12.f);
@@ -23,7 +23,7 @@ void Enemy::update(float deltaTime) {
     if (reachedGoal || path.empty()) return;
 
     Node* target = path[currentNodeIndex];
-    sf::Vector2f targetPos(target->x * 32.f + 16.f, target->y * 32.f + 16.f);
+    sf::Vector2f targetPos(target->x * 48.f + 24.f, target->y * 48.f + 24.f);
 
     sf::Vector2f dir = targetPos - position;
     float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -70,6 +70,11 @@ void Enemy::setTexture(sf::Texture& texture) {
     sf::Vector2u texSize = texture.getSize();
     sprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
     sprite->setPosition(position);
+    
+    // Scale sprite to fit cell size (48x48)
+    float scaleX = 48.f / texSize.x;
+    float scaleY = 48.f / texSize.y;
+    sprite->setScale({scaleX, scaleY});
 }
 
 void Enemy::drawHealthBar(sf::RenderWindow& window) const {
@@ -120,7 +125,7 @@ void Enemy::setPath(const std::vector<Node*>& newPath) {
     float minDist = std::numeric_limits<float>::max();
 
     for (int i = 0; i < static_cast<int>(path.size()); ++i) {
-        sf::Vector2f nodePos(path[i]->x * 32.f + 16.f, path[i]->y * 32.f + 16.f);
+        sf::Vector2f nodePos(path[i]->x * 48.f + 24.f, path[i]->y * 48.f + 24.f);
         sf::Vector2f diff = position - nodePos;
         float dist = std::sqrt(diff.x * diff.x + diff.y * diff.y);
         if (dist < minDist) {

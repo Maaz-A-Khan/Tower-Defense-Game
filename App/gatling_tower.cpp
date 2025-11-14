@@ -4,7 +4,7 @@
 #include <cmath>
 
 GatlingTower::GatlingTower(sf::Vector2f pos)
-    : Tower(pos, 120.f, 1.5f, 100, false, TowerType::Gatling),
+    : Tower(pos, 120.f, 1.5f, 100, true, TowerType::Gatling),
       damage(15.f),
       bulletSpeed(400.f),
       projectileManager(nullptr)
