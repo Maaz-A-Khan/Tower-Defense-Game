@@ -57,6 +57,8 @@ void AssetManager::loadAllAssets() {
     // Load fonts
     loadFont("main_font", "C:/Windows/Fonts/arial.ttf");
     
+    loadTexture("ui_panel", "../Assets/sidebar/sidebar.png");
+
     // Load grid texture
     loadTexture("grid_tile", "../Assets/grid/grid.png.png");
     loadTexture("start_tile", "../Assets/grid/start-point.png");

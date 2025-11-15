@@ -19,6 +19,10 @@ GameManager::GameManager()
     // Create UI Manager with the loaded font
     uiManager = new UIManager(assetManager.getFont("main_font"));
 
+    if (assetManager.hasTexture("ui_panel")) {
+        uiManager->setUIPanelTexture(assetManager.getTexture("ui_panel"));
+    }
+    
     // Set grid texture if available
     if (assetManager.hasTexture("grid_tile")) {
         grid.setTexture(assetManager.getTexture("grid_tile"));
