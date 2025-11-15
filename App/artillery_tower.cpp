@@ -42,6 +42,7 @@ void ArtilleryTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>
     }
 
     if (target) {
+        rotateToward(target->getPosition());
         sf::Vector2f direction = target->getPosition() - position;
         float len = std::hypot(direction.x, direction.y);
         if (len != 0) direction /= len;
@@ -52,7 +53,8 @@ void ArtilleryTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>
             bulletSpeed, 
             static_cast<int>(damage), 
             aoeRadius,
-            nullptr  // Fire-and-forget, not homing
+            nullptr,  // Fire-and-forget, not homing
+            ProjectileType::Artillery  // Specify Artillery bullet type
         );
         
         cooldown = 1.0f / fireRate;
@@ -60,9 +62,16 @@ void ArtilleryTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>
 }
 
 void ArtilleryTower::draw(sf::RenderWindow& window) {
-    if (sprite) {
-        window.draw(*sprite);
+    // Draw base first (static)
+    if (baseSprite) {
+        window.draw(*baseSprite);
+    }
+    
+    // Draw shooter on top (rotating)
+    if (shooterSprite) {
+        window.draw(*shooterSprite);
     } else {
+        // Fallback shape if no textures
         window.draw(shape);
     }
 }

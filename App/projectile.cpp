@@ -55,10 +55,15 @@ void Projectile::setTexture(sf::Texture& texture) {
     sprite->setPosition(position);
     
     // Scale sprite to fit projectile size (10x10 for normal, larger for AOE)
-    float targetSize = (aoeRadius > 0) ? 20.f : 10.f;
-    float scaleX = targetSize / texSize.x;
-    float scaleY = targetSize / texSize.y;
-    sprite->setScale({scaleX, scaleY});
+    float desiredWidth = (aoeRadius > 0) ? 24.f : 16.f;
+    float scale = desiredWidth / texSize.x;
+    sprite->setScale({scale, scale}); 
+
+    // Calculate rotation angle based on direction
+    float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159f;
+    
+    // Add 90 degrees if your bullet sprite faces north (upward) by default
+    sprite->setRotation(sf::degrees(angle + 90.f));
 }
 
 bool Projectile::checkCollision(Enemy* enemy) {

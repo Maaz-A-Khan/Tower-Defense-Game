@@ -7,7 +7,9 @@
 
 Enemy::Enemy(const std::vector<Node*>& path, float speed, int health)
     : path(path), baseSpeed(speed), health(health), maxHealth(health),
-      currentNodeIndex(0), reachedGoal(false)
+      currentNodeIndex(0), reachedGoal(false), 
+      currentDirection(Direction::East), currentFrame(0),
+      animationTimer(0.f), frameTime(0.15f)
 {
     if (!path.empty()) {
         position = sf::Vector2f(path[0]->x * 48.f + 24.f, path[0]->y * 48.f + 24.f);
@@ -17,6 +19,33 @@ Enemy::Enemy(const std::vector<Node*>& path, float speed, int health)
     shape.setFillColor(sf::Color::Red);
     shape.setOrigin({12.f, 12.f});
     shape.setPosition(position);
+}
+
+void Enemy::updateDirection(const sf::Vector2f& movement) {
+    // Determine direction based on movement vector
+    if (std::abs(movement.x) > std::abs(movement.y)) {
+        // Horizontal movement dominant
+        currentDirection = (movement.x > 0) ? Direction::East : Direction::West;
+    } else {
+        // Vertical movement dominant
+        currentDirection = (movement.y > 0) ? Direction::South : Direction::North;
+    }
+}
+
+void Enemy::updateAnimation(float deltaTime) {
+    if (directionTextures[currentDirection].empty()) return;
+    
+    animationTimer += deltaTime;
+    
+    if (animationTimer >= frameTime) {
+        animationTimer = 0.f;
+        currentFrame = (currentFrame + 1) % directionTextures[currentDirection].size();
+        
+        // Update sprite texture
+        if (sprite && directionTextures[currentDirection].size() > 0) {
+            sprite->setTexture(*directionTextures[currentDirection][currentFrame]);
+        }
+    }
 }
 
 void Enemy::update(float deltaTime) {
@@ -38,13 +67,37 @@ void Enemy::update(float deltaTime) {
     }
 
     dir /= len;
+    
+    // Update direction based on movement
+    updateDirection(dir);
+    
     float effectiveSpeed = getCurrentSpeed(target);
-    position += dir * effectiveSpeed * deltaTime;
+    sf::Vector2f movement = dir * effectiveSpeed * deltaTime;
+    position += movement;
     shape.setPosition(position);
     
-    // Update sprite position if using texture
+    // Update animation
+    updateAnimation(deltaTime);
+    
     if (sprite) {
         sprite->setPosition(position);
+    }
+}
+
+void Enemy::setDirectionalTextures(Direction dir, sf::Texture& frame1, sf::Texture& frame2) {
+    directionTextures[dir] = {&frame1, &frame2};
+    
+    // Initialize sprite with first frame if not already set
+    if (!sprite.has_value() && !directionTextures.empty()) {
+        sprite.emplace(*directionTextures[dir][0]);
+        
+        sf::Vector2u texSize = frame1.getSize();
+        sprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
+        sprite->setPosition(position);
+        
+        float scaleX = 48.f / texSize.x;
+        float scaleY = 48.f / texSize.y;
+        sprite->setScale({scaleX, scaleY});
     }
 }
 
@@ -61,20 +114,6 @@ void Enemy::draw(sf::RenderWindow& window) {
         window.draw(shape);
     }
     drawHealthBar(window);
-}
-
-void Enemy::setTexture(sf::Texture& texture) {
-    sprite.emplace(texture);
-    
-    // Center the sprite origin
-    sf::Vector2u texSize = texture.getSize();
-    sprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
-    sprite->setPosition(position);
-    
-    // Scale sprite to fit cell size (48x48)
-    float scaleX = 48.f / texSize.x;
-    float scaleY = 48.f / texSize.y;
-    sprite->setScale({scaleX, scaleY});
 }
 
 void Enemy::drawHealthBar(sf::RenderWindow& window) const {
@@ -164,25 +203,24 @@ ShieldEnemy::ShieldEnemy(const std::vector<Node*>& path)
 }
 
 void ShieldEnemy::draw(sf::RenderWindow& window) {
-    // Draw the enemy shape
-    window.draw(shape);
+    if (sprite) {
+        window.draw(*sprite);
+    } else {
+        window.draw(shape);
+    }
     
-    // Draw health bar
     drawHealthBar(window);
     
-    // Draw shield bar above health bar (only if shield exists)
     if (maxShield > 0) {
         float barWidth = 30.f;
         float barHeight = 4.f;
-        float shieldOffsetY = -25.f;  // Above the health bar
+        float shieldOffsetY = -25.f;
         
-        // Background
         sf::RectangleShape bgBar({barWidth, barHeight});
         bgBar.setPosition({position.x - barWidth / 2.f, position.y + shieldOffsetY});
         bgBar.setFillColor(sf::Color(40, 40, 40));
         window.draw(bgBar);
         
-        // Shield bar (cyan/blue color)
         float shieldPercent = static_cast<float>(shield) / static_cast<float>(maxShield);
         sf::RectangleShape shieldBar({barWidth * shieldPercent, barHeight});
         shieldBar.setPosition({position.x - barWidth / 2.f, position.y + shieldOffsetY});
@@ -195,7 +233,7 @@ void ShieldEnemy::takeDamage(int dmg) {
     if (shield > 0) {
         shield -= dmg;
         if (shield < 0) {
-            health += shield; // leftover damage applied to health
+            health += shield;
             shield = 0;
         }
     } else {

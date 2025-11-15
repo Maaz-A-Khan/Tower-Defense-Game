@@ -20,6 +20,9 @@ private:
     // Tower preview
     sf::RectangleShape towerPreview;
     
+    std::optional<sf::Sprite> uiPanelSprite;
+    sf::RectangleShape uiPanelBackground; 
+
     // Tower cost lookup
     int getTowerCost(TowerType type) const;
     std::string getTowerName(TowerType type) const;
@@ -31,7 +34,10 @@ public:
     void update(int money, int lives, int wave, TowerType selectedTower, int selectedTowerCost);
     
     // Draw UI elements
+    void setUIPanelTexture(sf::Texture& texture);
+
     void draw(sf::RenderWindow& window) const;
     void drawTowerPreview(sf::RenderWindow& window, sf::Vector2i gridPos, bool canPlace) const;
     void drawInstructions(sf::RenderWindow& window) const;
+    
 };

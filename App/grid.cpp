@@ -27,6 +27,16 @@ void Grid::setTexture(sf::Texture& texture) {
     std::cout << "Grid texture set: " << texture.getSize().x << "x" << texture.getSize().y << std::endl;
 }
 
+void Grid::setStartTexture(sf::Texture& texture) {
+    startTexture = &texture;
+    std::cout << "Start texture set: " << texture.getSize().x << "x" << texture.getSize().y << std::endl;
+}
+
+void Grid::setEndTexture(sf::Texture& texture) {
+    endTexture = &texture;
+    std::cout << "End texture set: " << texture.getSize().x << "x" << texture.getSize().y << std::endl;
+}
+
 Node* Grid::getNode(int x, int y) {
     if (x >= 0 && x < width && y >= 0 && y < height)
         return &nodes[y][x];
@@ -90,37 +100,54 @@ void Grid::resetCosts() {
 }
 
 void Grid::draw(sf::RenderWindow& window) {
-    float cellSize = 48.f;  // Match CELL_SIZE constant
+    float cellSize = 48.f;
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             Node& node = nodes[y][x];
+            sf::Vector2i currentPos(x, y);
 
-            // Draw the grid texture if available
             if (gridTexture) {
-                sf::Sprite gridSprite(*gridTexture);  // Create sprite each time
+                // Always draw the base grid texture first
+                sf::Sprite gridSprite(*gridTexture);
                 gridSprite.setPosition({x * cellSize, y * cellSize});
                 
-                // Scale to cell size
                 sf::Vector2u texSize = gridTexture->getSize();
                 float scaleX = cellSize / texSize.x;
                 float scaleY = cellSize / texSize.y;
                 gridSprite.setScale({scaleX, scaleY});
                 
-                // Tint the sprite based on tile type
-                if (!node.walkable) {
-                    gridSprite.setColor(sf::Color::White);  // Normal (no dark tint)
-                } else if (sf::Vector2i(x, y) == startCell) {
-                    gridSprite.setColor(sf::Color(0, 255, 0, 200));  // Green for start
-                } else if (sf::Vector2i(x, y) == endCell) {
-                    gridSprite.setColor(sf::Color(255, 0, 0, 200));  // Red for end
-                } else if (node.slowMultiplier > 1.0f) {
-                    gridSprite.setColor(sf::Color(100, 180, 255));  // Blue for frost
+                // Apply color tint for frost effect
+                if (node.slowMultiplier > 1.0f) {
+                    gridSprite.setColor(sf::Color(100, 180, 255));
                 } else {
-                    gridSprite.setColor(sf::Color::White);  // Normal
+                    gridSprite.setColor(sf::Color::White);
                 }
                 
                 window.draw(gridSprite);
+                
+                // Draw start/end overlay on top if this is a start or end cell
+                if (currentPos == startCell && startTexture) {
+                    sf::Sprite startSprite(*startTexture);
+                    startSprite.setPosition({x * cellSize, y * cellSize});
+                    
+                    sf::Vector2u startTexSize = startTexture->getSize();
+                    float startScaleX = cellSize / startTexSize.x;
+                    float startScaleY = cellSize / startTexSize.y;
+                    startSprite.setScale({startScaleX, startScaleY});
+                    
+                    window.draw(startSprite);
+                } else if (currentPos == endCell && endTexture) {
+                    sf::Sprite endSprite(*endTexture);
+                    endSprite.setPosition({x * cellSize, y * cellSize});
+                    
+                    sf::Vector2u endTexSize = endTexture->getSize();
+                    float endScaleX = cellSize / endTexSize.x;
+                    float endScaleY = cellSize / endTexSize.y;
+                    endSprite.setScale({endScaleX, endScaleY});
+                    
+                    window.draw(endSprite);
+                }
             } else {
                 // Fallback to rectangle rendering if no texture
                 sf::RectangleShape rect({cellSize - 1, cellSize - 1});

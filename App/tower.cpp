@@ -8,7 +8,8 @@ Tower::Tower(sf::Vector2f pos, float range, float fireRate, int cost, bool isBlo
       cooldown(0.0f),
       cost(cost),
       isBlocking(isBlocking),
-      type(type)
+      type(type),
+      currentRotation(-90.f)
 {}
 
 bool Tower::canAttack(Enemy* enemy) {
@@ -20,16 +21,41 @@ bool Tower::canAttack(Enemy* enemy) {
     return distanceSq <= (range * range);
 }
 
-void Tower::setTexture(sf::Texture& texture) {
-    sprite.emplace(texture);
+void Tower::setBaseTexture(sf::Texture& texture) {
+    baseSprite.emplace(texture);
     
-    // Center the sprite origin
     sf::Vector2u texSize = texture.getSize();
-    sprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
-    sprite->setPosition(position);
+    baseSprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
+    baseSprite->setPosition(position);
     
-    // Scale sprite to fit cell size (48x48)
     float scaleX = 48.f / texSize.x;
     float scaleY = 48.f / texSize.y;
-    sprite->setScale({scaleX, scaleY});
+    baseSprite->setScale({scaleX, scaleY});
+    // Base does NOT rotate
+}
+
+void Tower::setShooterTexture(sf::Texture& texture) {
+    shooterSprite.emplace(texture);
+    
+    sf::Vector2u texSize = texture.getSize();
+    shooterSprite->setOrigin({texSize.x / 2.f, texSize.y / 2.f});
+    shooterSprite->setPosition(position);
+    
+    float scaleX = 48.f / texSize.x;
+    float scaleY = 48.f / texSize.y;
+    shooterSprite->setScale({scaleX, scaleY});
+    
+    // Apply initial rotation to shooter only
+    shooterSprite->setRotation(sf::degrees(currentRotation));
+}
+
+void Tower::rotateToward(const sf::Vector2f& targetPos) {
+    if (!shooterSprite.has_value()) return;
+    
+    float dx = targetPos.x - position.x;
+    float dy = targetPos.y - position.y;
+    float angle = std::atan2(dy, dx) * 180.f / 3.14159f;
+    
+    currentRotation = angle + 90.f;
+    shooterSprite->setRotation(sf::degrees(currentRotation));
 }

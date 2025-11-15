@@ -19,9 +19,20 @@ GameManager::GameManager()
     // Create UI Manager with the loaded font and asset manager
     uiManager = new UIManager(assetManager.getFont("main_font"), assetManager);
 
+    if (assetManager.hasTexture("ui_panel")) {
+        uiManager->setUIPanelTexture(assetManager.getTexture("ui_panel"));
+    }
+    
     // Set grid texture if available
     if (assetManager.hasTexture("grid_tile")) {
         grid.setTexture(assetManager.getTexture("grid_tile"));
+    }
+    if (assetManager.hasTexture("start_tile")) {
+        grid.setStartTexture(assetManager.getTexture("start_tile"));
+    }
+
+    if (assetManager.hasTexture("end_tile")) {
+        grid.setEndTexture(assetManager.getTexture("end_tile"));
     }
 
     // Set start/end points for pathfinding

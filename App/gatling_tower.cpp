@@ -41,6 +41,8 @@ void GatlingTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& 
     }
 
     if (target) {
+        rotateToward(target->getPosition());
+
         sf::Vector2f direction = target->getPosition() - position;
         
         projectileManager->spawnProjectile(
@@ -49,7 +51,9 @@ void GatlingTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& 
             bulletSpeed, 
             static_cast<int>(damage),
             0.f,      // aoeRadius = 0
-            nullptr   // target = nullptr (fire-and-forget, not homing)
+            nullptr,  // target = nullptr (fire-and-forget, not homing)
+            ProjectileType::Gatling  // Specify Gatling bullet type
+
         );
 
         cooldown = 1.0f / fireRate;
@@ -57,9 +61,16 @@ void GatlingTower::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& 
 }
 
 void GatlingTower::draw(sf::RenderWindow& window) {
-    if (sprite) {
-        window.draw(*sprite);
+    // Draw base first (static)
+    if (baseSprite) {
+        window.draw(*baseSprite);
+    }
+    
+    // Draw shooter on top (rotating)
+    if (shooterSprite) {
+        window.draw(*shooterSprite);
     } else {
+        // Fallback shape if no textures
         window.draw(shape);
     }
 }
