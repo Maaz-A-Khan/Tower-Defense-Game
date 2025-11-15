@@ -60,13 +60,15 @@ void AssetManager::loadAllAssets() {
     // Load grid texture
     loadTexture("grid_tile", "../Assets/grid/grid.png.png");
     
+    // Load UI textures
+    loadTexture("ui_panel", "../Assets/ui/panel_background.png");
+    
     // Load tower textures (if you create them later)
     // loadTexture("gatling_tower", "../Assets/towers/gatling.png");
     loadTexture("frost_tower", "../Assets/towers/frost.png");
     // loadTexture("artillery_tower", "../Assets/towers/artillery.png");
-    // loadTexture("barrier_tower", "../Assets/towers/barrier.png");
+    loadTexture("barrier_tower", "../Assets/towers/barrier.png");
     
-    // Load enemy textures (if you create them later)
     loadTexture("normal_enemy", "../Assets/enemies/normal.png");
     // loadTexture("fast_enemy", "../Assets/enemies/fast.png");
     // loadTexture("tank_enemy", "../Assets/enemies/tank.png");

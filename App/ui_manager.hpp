@@ -1,7 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <optional>
+#include <memory>
 #include "tower.hpp"
+#include "asset_manager.hpp"
 
 class UIManager {
 private:
@@ -12,6 +14,9 @@ private:
     std::optional<sf::Text> selectedTowerText;
     std::optional<sf::Text> instructionsText;
     
+    // Panel background
+    std::unique_ptr<sf::Sprite> panelBackground;
+    
     // Tower preview
     sf::RectangleShape towerPreview;
     
@@ -20,7 +25,7 @@ private:
     std::string getTowerName(TowerType type) const;
 
 public:
-    UIManager(sf::Font& font);
+    UIManager(sf::Font& font, AssetManager& assets);
 
     // Update UI with current game state
     void update(int money, int lives, int wave, TowerType selectedTower, int selectedTowerCost);

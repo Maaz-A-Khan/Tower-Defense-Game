@@ -1,39 +1,59 @@
 #include "ui_manager.hpp"
+#include <iostream>
 
-UIManager::UIManager(sf::Font& font) {
+UIManager::UIManager(sf::Font& font, AssetManager& assets) {
     // Initialize text objects with the font
     moneyText.emplace(font);
     livesText.emplace(font);
     waveText.emplace(font);
     selectedTowerText.emplace(font);
     instructionsText.emplace(font);
+    
+    // Setup panel background if texture is available
+    if (assets.hasTexture("ui_panel")) {
+        sf::Texture& panelTexture = assets.getTexture("ui_panel");
+        panelBackground = std::make_unique<sf::Sprite>(panelTexture);
+        panelBackground->setPosition({960.f, 0.f});
+        
+        // Scale the panel to fit the UI area (320 width x 800 height)
+        sf::Vector2u textureSize = panelTexture.getSize();
+        float scaleX = 320.f / textureSize.x;
+        float scaleY = 800.f / textureSize.y;
+        panelBackground->setScale({scaleX, scaleY});
+        std::cout << "Panel background loaded and scaled to 320x800" << std::endl;
+    } else {
+        std::cerr << "WARNING: UI panel texture not found!" << std::endl;
+    }
 
     // UI elements positioned on the right side (grid is 960px wide with 48px cells)
     float uiX = 980.f;  // 20px padding from grid edge
+    
+    // Dark brown color for text visibility on parchment
+    sf::Color textColor(60, 40, 20);
 
     // Setup money text
     moneyText->setCharacterSize(20);
-    moneyText->setFillColor(sf::Color::Yellow);
+    moneyText->setFillColor(sf::Color(200, 150, 0));  // Gold color for money
     moneyText->setPosition({uiX, 10.f});
 
     // Setup lives text
     livesText->setCharacterSize(20);
-    livesText->setFillColor(sf::Color::Red);
+    livesText->setFillColor(sf::Color(180, 0, 0));  // Dark red for lives
     livesText->setPosition({uiX, 40.f});
 
     // Setup wave text
     waveText->setCharacterSize(20);
-    waveText->setFillColor(sf::Color::Cyan);
+    waveText->setFillColor(sf::Color(0, 100, 150));  // Dark cyan for wave
     waveText->setPosition({uiX, 70.f});
 
     // Setup selected tower text
     selectedTowerText->setCharacterSize(18);
-    selectedTowerText->setFillColor(sf::Color::White);
+    selectedTowerText->setFillColor(textColor);
     selectedTowerText->setPosition({uiX, 100.f});
 
     // Setup instructions text
     instructionsText->setCharacterSize(16);
-    instructionsText->setFillColor(sf::Color(200, 200, 200));
+    instructionsText->setFillColor(textColor);
     instructionsText->setPosition({uiX, 140.f});
     instructionsText->setString("Controls:\n1-4: Select Tower\nSpace: Start Wave\nEsc: Pause");
 
@@ -56,6 +76,12 @@ void UIManager::draw(sf::RenderWindow& window) const {
     // Need to cast away const because SFML 3.0.2 draw is non-const
     auto& nonConstWindow = const_cast<sf::RenderWindow&>(window);
     
+    // Draw panel background first (if loaded)
+    if (panelBackground) {
+        nonConstWindow.draw(*panelBackground);
+    }
+    
+    // Draw text on top of panel
     nonConstWindow.draw(*moneyText);
     nonConstWindow.draw(*livesText);
     nonConstWindow.draw(*waveText);

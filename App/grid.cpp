@@ -109,7 +109,7 @@ void Grid::draw(sf::RenderWindow& window) {
                 
                 // Tint the sprite based on tile type
                 if (!node.walkable) {
-                    gridSprite.setColor(sf::Color(50, 50, 50));  // Dark for obstacles
+                    gridSprite.setColor(sf::Color::White);  // Normal (no dark tint)
                 } else if (sf::Vector2i(x, y) == startCell) {
                     gridSprite.setColor(sf::Color(0, 255, 0, 200));  // Green for start
                 } else if (sf::Vector2i(x, y) == endCell) {
@@ -126,7 +126,7 @@ void Grid::draw(sf::RenderWindow& window) {
                 sf::RectangleShape rect({cellSize - 1, cellSize - 1});
                 
                 if (!node.walkable)
-                    rect.setFillColor(sf::Color::Black);
+                    rect.setFillColor(sf::Color(200, 200, 200));  // Same as normal tiles
                 else if (sf::Vector2i(x, y) == startCell)
                     rect.setFillColor(sf::Color::Green);
                 else if (sf::Vector2i(x, y) == endCell)

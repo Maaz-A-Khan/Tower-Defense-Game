@@ -16,8 +16,8 @@ GameManager::GameManager()
     // Load all assets
     assetManager.loadAllAssets();
 
-    // Create UI Manager with the loaded font
-    uiManager = new UIManager(assetManager.getFont("main_font"));
+    // Create UI Manager with the loaded font and asset manager
+    uiManager = new UIManager(assetManager.getFont("main_font"), assetManager);
 
     // Set grid texture if available
     if (assetManager.hasTexture("grid_tile")) {
