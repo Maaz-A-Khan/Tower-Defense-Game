@@ -78,10 +78,37 @@ void AssetManager::loadAllAssets() {
     loadTexture("artillery_bullet", "../Assets/bullets/artillery.png");
 
     // Load enemy textures (if you create them later)
-    loadTexture("normal_enemy", "../Assets/enemies/normal.png");
-    // loadTexture("fast_enemy", "../Assets/enemies/fast.png");
-    // loadTexture("tank_enemy", "../Assets/enemies/tank.png");
-    // loadTexture("shield_enemy", "../Assets/enemies/shield.png");
+    // Enemy textures - directional with 2 frames each
+    //normal enemiees
+    loadTexture("normal_north_1", "../Assets/enemies/normal_enemy_up_1.png");
+    loadTexture("normal_north_2", "../Assets/enemies/normal_enemy_up_2.png");
+    loadTexture("normal_south_1", "../Assets/enemies/normal_enemy_down_1.png");
+    loadTexture("normal_south_2", "../Assets/enemies/normal_enemy_down_2.png");
+    loadTexture("normal_east_1", "../Assets/enemies/normal_enemy_right_1.png");
+    loadTexture("normal_east_2", "../Assets/enemies/normal_enemy_right_2.png");
+    loadTexture("normal_west_1", "../Assets/enemies/normal_enemy_left_1.png");
+    loadTexture("normal_west_2", "../Assets/enemies/normal_enemy_left_2.png");
+
+    //fast enemies
+    loadTexture("fast_north_1", "../Assets/enemies/fast_enemy_up_1.png");
+    loadTexture("fast_north_2", "../Assets/enemies/fast_enemy_up_2.png");
+    loadTexture("fast_south_1", "../Assets/enemies/fast_enemy_down_1.png");
+    loadTexture("fast_south_2", "../Assets/enemies/fast_enemy_down_2.png");
+    loadTexture("fast_east_1", "../Assets/enemies/fast_enemy_right_1.png");
+    loadTexture("fast_east_2", "../Assets/enemies/fast_enemy_right_2.png");
+    loadTexture("fast_west_1", "../Assets/enemies/fast_enemy_left_1.png");
+    loadTexture("fast_west_2", "../Assets/enemies/fast_enemy_left_2.png");
+
+    //tank enemies
+    loadTexture("tank_north_1", "../Assets/enemies/tank_enemy_up_1.png");
+    loadTexture("tank_north_2", "../Assets/enemies/tank_enemy_up_2.png");
+    loadTexture("tank_south_1", "../Assets/enemies/tank_enemy_down_1.png");
+    loadTexture("tank_south_2", "../Assets/enemies/tank_enemy_down_2.png");
+    loadTexture("tank_east_1", "../Assets/enemies/tank_enemy_right_1.png");
+    loadTexture("tank_east_2", "../Assets/enemies/tank_enemy_right_2.png");
+    loadTexture("tank_west_1", "../Assets/enemies/tank_enemy_left_1.png");
+    loadTexture("tank_west_2", "../Assets/enemies/tank_enemy_left_2.png");
+    
     
     // Load explosion pngs
     loadTexture("explosion1", "../Assets/grid/explosion-1.png");

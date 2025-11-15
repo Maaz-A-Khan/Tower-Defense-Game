@@ -77,26 +77,70 @@ void EnemyManager::spawnEnemy()
     {
     case 0:
         e = std::make_unique<NormalEnemy>(cachedPath);
-        if (assetManager && assetManager->hasTexture("normal_enemy")) {
-            e->setTexture(assetManager->getTexture("normal_enemy"));
+        if (assetManager) {
+            e->setDirectionalTextures(Direction::North, 
+                assetManager->getTexture("normal_north_1"), 
+                assetManager->getTexture("normal_north_2"));
+            e->setDirectionalTextures(Direction::South, 
+                assetManager->getTexture("normal_south_1"), 
+                assetManager->getTexture("normal_south_2"));
+            e->setDirectionalTextures(Direction::East, 
+                assetManager->getTexture("normal_east_1"), 
+                assetManager->getTexture("normal_east_2"));
+            e->setDirectionalTextures(Direction::West, 
+                assetManager->getTexture("normal_west_1"), 
+                assetManager->getTexture("normal_west_2"));
         }
         break;
     case 1:
         e = std::make_unique<FastEnemy>(cachedPath);
-        if (assetManager && assetManager->hasTexture("fast_enemy")) {
-            e->setTexture(assetManager->getTexture("fast_enemy"));
+        if (assetManager) {
+            e->setDirectionalTextures(Direction::North, 
+                assetManager->getTexture("fast_north_1"), 
+                assetManager->getTexture("fast_north_2"));
+            e->setDirectionalTextures(Direction::South, 
+                assetManager->getTexture("fast_south_1"), 
+                assetManager->getTexture("fast_south_2"));
+            e->setDirectionalTextures(Direction::East, 
+                assetManager->getTexture("fast_east_1"), 
+                assetManager->getTexture("fast_east_2"));
+            e->setDirectionalTextures(Direction::West, 
+                assetManager->getTexture("fast_west_1"), 
+                assetManager->getTexture("fast_west_2"));
         }
         break;
     case 2:
         e = std::make_unique<TankEnemy>(cachedPath);
-        if (assetManager && assetManager->hasTexture("tank_enemy")) {
-            e->setTexture(assetManager->getTexture("tank_enemy"));
+        if (assetManager) {
+            e->setDirectionalTextures(Direction::North, 
+                assetManager->getTexture("tank_north_1"), 
+                assetManager->getTexture("tank_north_2"));
+            e->setDirectionalTextures(Direction::South, 
+                assetManager->getTexture("tank_south_1"), 
+                assetManager->getTexture("tank_south_2"));
+            e->setDirectionalTextures(Direction::East, 
+                assetManager->getTexture("tank_east_1"), 
+                assetManager->getTexture("tank_east_2"));
+            e->setDirectionalTextures(Direction::West, 
+                assetManager->getTexture("tank_west_1"), 
+                assetManager->getTexture("tank_west_2"));
         }
         break;
     case 3:
         e = std::make_unique<ShieldEnemy>(cachedPath);
-        if (assetManager && assetManager->hasTexture("shield_enemy")) {
-            e->setTexture(assetManager->getTexture("shield_enemy"));
+        if (assetManager) {
+            e->setDirectionalTextures(Direction::North, 
+                assetManager->getTexture("normal_north_1"), 
+                assetManager->getTexture("normal_north_2"));
+            e->setDirectionalTextures(Direction::South, 
+                assetManager->getTexture("normal_south_1"), 
+                assetManager->getTexture("normal_south_2"));
+            e->setDirectionalTextures(Direction::East, 
+                assetManager->getTexture("normal_east_1"), 
+                assetManager->getTexture("normal_east_2"));
+            e->setDirectionalTextures(Direction::West, 
+                assetManager->getTexture("normal_west_1"), 
+                assetManager->getTexture("normal_west_2"));
         }
         break;
     }

@@ -4,8 +4,15 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <optional>
+#include <map>
 #include "node.hpp"
 
+enum class Direction {
+    North,
+    South,
+    East,
+    West
+};
 class Enemy {
 protected:
     sf::Vector2f position;
@@ -18,10 +25,18 @@ protected:
     int currentNodeIndex;
 
     sf::CircleShape shape;
-    std::optional<sf::Sprite> sprite;  // Optional sprite for rendering textured enemies
-    
+
+    std::map<Direction, std::vector<sf::Texture*>> directionTextures;
+    std::optional<sf::Sprite> sprite;
+    Direction currentDirection;
+    int currentFrame;
+    float animationTimer;
+    float frameTime;  
+
     // Health bar rendering
     void drawHealthBar(sf::RenderWindow& window) const;
+    void updateDirection(const sf::Vector2f& movement);
+    void updateAnimation(float deltaTime);
 
 public:
     Enemy(const std::vector<Node*>& path, float speed = 100.f, int health = 100);
@@ -31,7 +46,7 @@ public:
     virtual void draw(sf::RenderWindow& window);
     virtual void takeDamage(int dmg);
     
-    void setTexture(sf::Texture& texture);  // Method to set enemy texture
+    void setDirectionalTextures(Direction dir, sf::Texture& frame1, sf::Texture& frame2);
 
     void setPath(const std::vector<Node*>& newPath);
 
