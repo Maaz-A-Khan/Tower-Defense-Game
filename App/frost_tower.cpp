@@ -31,8 +31,8 @@ void FrostTower::draw(sf::RenderWindow& window) {
     window.draw(aoeVisual);
 
     // Draw tower sprite or fallback to circle
-    if (sprite) {
-        window.draw(*sprite);
+    if (baseSprite) {
+        window.draw(*baseSprite);
     } else {
         sf::CircleShape towerBase(16);
         towerBase.setOrigin({16.f, 16.f});

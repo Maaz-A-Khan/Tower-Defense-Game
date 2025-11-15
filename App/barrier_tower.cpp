@@ -37,8 +37,8 @@ bool BarrierTower::isDestroyed() const {
 }
 
 void BarrierTower::draw(sf::RenderWindow& window) {
-    if (sprite) {
-        window.draw(*sprite);
+    if (baseSprite) {
+        window.draw(*baseSprite);
     } else {
         window.draw(shape);
     }

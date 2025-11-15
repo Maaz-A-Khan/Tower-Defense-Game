@@ -61,17 +61,33 @@ void AssetManager::loadAllAssets() {
     loadTexture("grid_tile", "../Assets/grid/grid.png.png");
     
     // Load tower textures (if you create them later)
-    // loadTexture("gatling_tower", "../Assets/towers/gatling.png");
-    loadTexture("frost_tower", "../Assets/towers/frost.png");
-    // loadTexture("artillery_tower", "../Assets/towers/artillery.png");
+    loadTexture("gatling_tower_base", "../Assets/towers/gatling-base.png");
+    loadTexture("gatling_tower_shooter", "../Assets/towers/gatling-shooter.png");
+
+    loadTexture("frost_tower", "../Assets/towers/frost-tower.png");
+    
+    loadTexture("artillery_tower_base", "../Assets/towers/artillery-base.png");
+    loadTexture("artillery_tower_shooter", "../Assets/towers/artillery-shooter.png");
+
     // loadTexture("barrier_tower", "../Assets/towers/barrier.png");
     
+    // Load projectile textures
+    loadTexture("gatling_bullet", "../Assets/bullets/gatling.png");
+    loadTexture("artillery_bullet", "../Assets/bullets/artillery.png");
+
     // Load enemy textures (if you create them later)
     loadTexture("normal_enemy", "../Assets/enemies/normal.png");
     // loadTexture("fast_enemy", "../Assets/enemies/fast.png");
     // loadTexture("tank_enemy", "../Assets/enemies/tank.png");
     // loadTexture("shield_enemy", "../Assets/enemies/shield.png");
     
+    // In loadAllAssets():
+    loadTexture("explosion1", "../Assets/grid/explosion-1.png");
+    loadTexture("explosion2", "../Assets/grid/explosion-2.png");
+    loadTexture("explosion3", "../Assets/grid/explosion-3.png");
+    loadTexture("explosion4", "../Assets/grid/explosion-4.png");
+    loadTexture("explosion5", "../Assets/grid/explosion-5.png");
+
     std::cout << "=== Asset Loading Complete ===" << std::endl;
     std::cout << "Textures loaded: " << textures.size() << std::endl;
     std::cout << "Fonts loaded: " << fonts.size() << std::endl << std::endl;

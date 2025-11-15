@@ -4,6 +4,11 @@
 
 class Enemy;
 
+enum class ProjectileType {
+    Gatling,
+    Artillery
+};
+
 class Projectile {
 public:
     sf::Vector2f position;
@@ -14,6 +19,8 @@ public:
     
     float aoeRadius;
     Enemy* target;
+    ProjectileType projectileType;  // Add this field
+
 
     sf::CircleShape shape;
     std::optional<sf::Sprite> sprite;  // Optional sprite for textured projectiles

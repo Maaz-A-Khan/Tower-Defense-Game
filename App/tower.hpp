@@ -24,7 +24,9 @@ protected:
     bool isBlocking;
     TowerType type;
     
-    std::optional<sf::Sprite> sprite;  // Optional sprite for textured towers
+    std::optional<sf::Sprite> baseSprite;    // Static base
+    std::optional<sf::Sprite> shooterSprite; // Rotating shooter
+    float currentRotation = -90.f;
 
 public:
     Tower(sf::Vector2f pos, float range, float fireRate, int cost, bool isBlocking, TowerType type);
@@ -35,10 +37,13 @@ public:
     virtual void draw(sf::RenderWindow& window) = 0;
 
     // Texture support
-    void setTexture(sf::Texture& texture);
+    void setBaseTexture(sf::Texture& texture);
+    void setShooterTexture(sf::Texture& texture);
     
     // Utility
     bool canAttack(Enemy* enemy);
+
+    void rotateToward(const sf::Vector2f& targetPos);
 
     // Accessors
     const sf::Vector2f& getPosition() const { return position; }

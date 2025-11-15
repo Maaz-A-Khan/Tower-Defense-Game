@@ -84,8 +84,9 @@ bool TowerManager::placeTower(TowerType type, sf::Vector2i gridPos) {
         case TowerType::Gatling: {
             auto tower = std::make_unique<GatlingTower>(worldPos);
             tower->setProjectileManager(&projectileManager);
-            if (assetManager && assetManager->hasTexture("gatling_tower")) {
-                tower->setTexture(assetManager->getTexture("gatling_tower"));
+            if (assetManager && assetManager->hasTexture("gatling_tower_base")) {
+                tower->setBaseTexture(assetManager->getTexture("gatling_tower_base"));
+                tower->setShooterTexture(assetManager->getTexture("gatling_tower_shooter"));
             }
             towers.push_back(std::move(tower));
             break;
@@ -93,8 +94,9 @@ bool TowerManager::placeTower(TowerType type, sf::Vector2i gridPos) {
         case TowerType::Artillery: {
             auto tower = std::make_unique<ArtilleryTower>(worldPos);
             tower->setProjectileManager(&projectileManager);
-            if (assetManager && assetManager->hasTexture("artillery_tower")) {
-                tower->setTexture(assetManager->getTexture("artillery_tower"));
+            if (assetManager && assetManager->hasTexture("artillery_tower_base")) {
+                tower->setBaseTexture(assetManager->getTexture("artillery_tower_base"));
+                tower->setShooterTexture(assetManager->getTexture("artillery_tower_shooter"));
             }
             towers.push_back(std::move(tower));
             break;
@@ -102,7 +104,7 @@ bool TowerManager::placeTower(TowerType type, sf::Vector2i gridPos) {
         case TowerType::Frost: {
             auto frostTower = std::make_unique<FrostTower>(worldPos, grid, 100.f, 0.f, 150, 0.5f, 2);
             if (assetManager && assetManager->hasTexture("frost_tower")) {
-                frostTower->setTexture(assetManager->getTexture("frost_tower"));
+                frostTower->setBaseTexture(assetManager->getTexture("frost_tower"));
             }
             frostTower->applyFrostEffects(); 
             towers.push_back(std::move(frostTower));
@@ -111,7 +113,7 @@ bool TowerManager::placeTower(TowerType type, sf::Vector2i gridPos) {
         case TowerType::Barrier: {
             auto tower = std::make_unique<BarrierTower>(worldPos);
             if (assetManager && assetManager->hasTexture("barrier_tower")) {
-                tower->setTexture(assetManager->getTexture("barrier_tower"));
+                tower->setBaseTexture(assetManager->getTexture("barrier_tower"));
             }
             towers.push_back(std::move(tower));
             break;
