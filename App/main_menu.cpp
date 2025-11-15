@@ -11,43 +11,43 @@ MainMenu::MainMenu(sf::RenderWindow& win, AssetManager* assets)
     // Button dimensions (fallback)
     float buttonWidth = 300.f;
     float buttonHeight = 80.f;
-    float centerX = 1248.f / 2.f - buttonWidth / 2.f;
+    float gap = 100.f;  // Gap between buttons
     
-    // Start button fallback
+    // Center of bottom half: Y = 540 (3/4 down from top)
+    // Position buttons side-by-side centered horizontally
+    float totalWidth = buttonWidth * 2 + gap;
+    float startX = (1248.f - totalWidth) / 2.f;
+    float buttonY = 540.f - buttonHeight / 2.f;  // Center at 540
+    
+    // Start button fallback (left)
     startButton.setSize({buttonWidth, buttonHeight});
-    startButton.setPosition({centerX, 300.f});
+    startButton.setPosition({startX, buttonY});
     startButton.setFillColor(sf::Color(50, 150, 50));
     startButton.setOutlineColor(sf::Color::White);
     startButton.setOutlineThickness(3.f);
     
-    // Exit button fallback
+    // Exit button fallback (right)
     exitButton.setSize({buttonWidth, buttonHeight});
-    exitButton.setPosition({centerX, 420.f});
+    exitButton.setPosition({startX + buttonWidth + gap, buttonY});
     exitButton.setFillColor(sf::Color(150, 50, 50));
     exitButton.setOutlineColor(sf::Color::White);
     exitButton.setOutlineThickness(3.f);
     
-    // Text setup
+    // Text setup (only for buttons, no title)
     if (assetManager && assetManager->hasFont("main_font")) {
         sf::Font& font = assetManager->getFont("main_font");
         
-        titleText.emplace(font);
-        titleText->setString("TOWER DEFENSE");
-        titleText->setCharacterSize(60);
-        titleText->setFillColor(sf::Color::White);
-        titleText->setPosition({centerX - 50.f, 150.f});
-        
         startText.emplace(font);
         startText->setString("START");
-        startText->setCharacterSize(40);
-        startText->setFillColor(sf::Color::White);
-        startText->setPosition({centerX + 90.f, 315.f});
+        startText->setCharacterSize(60);
+        startText->setFillColor(sf::Color::Black);
+        startText->setPosition({startX + 75.f, buttonY - 5.f});
         
         exitText.emplace(font);
         exitText->setString("EXIT");
-        exitText->setCharacterSize(40);
-        exitText->setFillColor(sf::Color::White);
-        exitText->setPosition({centerX + 105.f, 435.f});
+        exitText->setCharacterSize(60);
+        exitText->setFillColor(sf::Color::Black);
+        exitText->setPosition({startX + buttonWidth + gap + 95.f, buttonY - 5.f});
     }
 }
 
@@ -66,9 +66,12 @@ void MainMenu::setStartButtonTexture(sf::Texture& texture) {
     
     float buttonWidth = 300.f;
     float buttonHeight = 80.f;
-    float centerX = 1248.f / 2.f - buttonWidth / 2.f;
+    float gap = 100.f;
+    float totalWidth = buttonWidth * 2 + gap;
+    float startX = (1248.f - totalWidth) / 2.f;
+    float buttonY = 540.f - buttonHeight / 2.f;
     
-    startButtonSprite->setPosition({centerX, 300.f});
+    startButtonSprite->setPosition({startX, buttonY});
     
     sf::Vector2u texSize = texture.getSize();
     float scaleX = buttonWidth / texSize.x;
@@ -77,7 +80,7 @@ void MainMenu::setStartButtonTexture(sf::Texture& texture) {
     
     // Update button bounds for collision
     startButton.setSize({buttonWidth, buttonHeight});
-    startButton.setPosition({centerX, 300.f});
+    startButton.setPosition({startX, buttonY});
 }
 
 void MainMenu::setExitButtonTexture(sf::Texture& texture) {
@@ -85,9 +88,12 @@ void MainMenu::setExitButtonTexture(sf::Texture& texture) {
     
     float buttonWidth = 300.f;
     float buttonHeight = 80.f;
-    float centerX = 1248.f / 2.f - buttonWidth / 2.f;
+    float gap = 100.f;
+    float totalWidth = buttonWidth * 2 + gap;
+    float startX = (1248.f - totalWidth) / 2.f;
+    float buttonY = 540.f - buttonHeight / 2.f;
     
-    exitButtonSprite->setPosition({centerX, 420.f});
+    exitButtonSprite->setPosition({startX + buttonWidth + gap, buttonY});
     
     sf::Vector2u texSize = texture.getSize();
     float scaleX = buttonWidth / texSize.x;
@@ -96,7 +102,7 @@ void MainMenu::setExitButtonTexture(sf::Texture& texture) {
     
     // Update button bounds for collision
     exitButton.setSize({buttonWidth, buttonHeight});
-    exitButton.setPosition({centerX, 420.f});
+    exitButton.setPosition({startX + buttonWidth + gap, buttonY});
 }
 
 bool MainMenu::handleInput() {
@@ -178,8 +184,7 @@ void MainMenu::render() {
         window.draw(exitButton);
     }
     
-    // Draw text
-    if (titleText) window.draw(*titleText);
+    // Draw text (button labels only, no title)
     if (startText) window.draw(*startText);
     if (exitText) window.draw(*exitText);
     

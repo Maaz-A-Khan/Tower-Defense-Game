@@ -22,6 +22,8 @@ Enemy::Enemy(const std::vector<Node*>& path, float speed, int health)
 }
 
 void Enemy::updateDirection(const sf::Vector2f& movement) {
+    Direction previousDirection = currentDirection;
+    
     // Determine direction based on movement vector
     if (std::abs(movement.x) > std::abs(movement.y)) {
         // Horizontal movement dominant
@@ -29,6 +31,13 @@ void Enemy::updateDirection(const sf::Vector2f& movement) {
     } else {
         // Vertical movement dominant
         currentDirection = (movement.y > 0) ? Direction::South : Direction::North;
+    }
+    
+    // If direction changed, immediately update sprite texture
+    if (previousDirection != currentDirection) {
+        currentFrame = 0;  // Reset to first frame of new direction
+        animationTimer = 0.f;  // Reset animation timer
+        refreshSpriteTexture();  // Immediately show correct texture
     }
 }
 
@@ -87,8 +96,8 @@ void Enemy::update(float deltaTime) {
 void Enemy::setDirectionalTextures(Direction dir, sf::Texture& frame1, sf::Texture& frame2) {
     directionTextures[dir] = {&frame1, &frame2};
     
-    // Initialize sprite with first frame if not already set
-    if (!sprite.has_value() && !directionTextures.empty()) {
+    // Initialize sprite with current direction's first frame if not already set
+    if (!sprite.has_value()) {
         sprite.emplace(*directionTextures[dir][0]);
         
         sf::Vector2u texSize = frame1.getSize();
@@ -98,6 +107,41 @@ void Enemy::setDirectionalTextures(Direction dir, sf::Texture& frame1, sf::Textu
         float scaleX = 48.f / texSize.x;
         float scaleY = 48.f / texSize.y;
         sprite->setScale({scaleX, scaleY});
+    }
+    
+    // If this is the current direction, update sprite texture immediately
+    if (dir == currentDirection && sprite.has_value()) {
+        sprite->setTexture(*directionTextures[dir][0]);
+        
+        // Flip sprite horizontally if facing West
+        sf::Vector2u texSize = frame1.getSize();
+        float scaleX = 48.f / texSize.x;
+        float scaleY = 48.f / texSize.y;
+        if (dir == Direction::West) {
+            sprite->setScale({-scaleX, scaleY});  // Negative X scale flips horizontally
+        } else {
+            sprite->setScale({scaleX, scaleY});
+        }
+    }
+}
+
+void Enemy::refreshSpriteTexture() {
+    // Update sprite to show the correct texture for current direction
+    if (sprite.has_value() && !directionTextures[currentDirection].empty()) {
+        sprite->setTexture(*directionTextures[currentDirection][currentFrame]);
+        
+        // Apply horizontal flip for West direction
+        if (!directionTextures[currentDirection].empty()) {
+            sf::Vector2u texSize = directionTextures[currentDirection][0]->getSize();
+            float scaleX = 48.f / texSize.x;
+            float scaleY = 48.f / texSize.y;
+            
+            if (currentDirection == Direction::West) {
+                sprite->setScale({-scaleX, scaleY});  // Flip horizontally for West
+            } else {
+                sprite->setScale({scaleX, scaleY});   // Normal scale for other directions
+            }
+        }
     }
 }
 
@@ -174,6 +218,20 @@ void Enemy::setPath(const std::vector<Node*>& newPath) {
     }
 
     currentNodeIndex = closestIdx;
+    
+    // Update direction based on new path to ensure sprite shows correct direction
+    if (currentNodeIndex < static_cast<int>(path.size()) - 1) {
+        Node* nextNode = path[currentNodeIndex + 1];
+        sf::Vector2f nextPos(nextNode->x * 48.f + 24.f, nextNode->y * 48.f + 24.f);
+        sf::Vector2f direction = nextPos - position;
+        
+        // Normalize and update direction
+        float len = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+        if (len > 0.01f) {
+            direction /= len;
+            updateDirection(direction);  // This triggers refreshSpriteTexture if direction changes
+        }
+    }
 }
 
 bool Enemy::isDead() const { return health <= 0; }

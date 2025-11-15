@@ -47,6 +47,7 @@ public:
     virtual void takeDamage(int dmg);
     
     void setDirectionalTextures(Direction dir, sf::Texture& frame1, sf::Texture& frame2);
+    void refreshSpriteTexture();  // Refresh sprite to current direction
 
     void setPath(const std::vector<Node*>& newPath);
 

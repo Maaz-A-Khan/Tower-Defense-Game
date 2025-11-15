@@ -56,7 +56,7 @@ void AssetManager::loadAllAssets() {
     
     // Load fonts
     
-    loadFont("main_font", "C:/Windows/Fonts/arial.ttf");
+    loadFont("main_font", "../Assets/fonts/PixicaMono-Bold.ttf");
     
     loadTexture("menu_background", "../Assets/ui/menu_background.png");
     loadTexture("start_button", "../Assets/ui/start_button.png");
@@ -93,8 +93,9 @@ void AssetManager::loadAllAssets() {
     loadTexture("normal_south_2", "../Assets/enemies/normal_enemy_down_2.png");
     loadTexture("normal_east_1", "../Assets/enemies/normal_enemy_right_1.png");
     loadTexture("normal_east_2", "../Assets/enemies/normal_enemy_right_2.png");
-    loadTexture("normal_west_1", "../Assets/enemies/normal_enemy_left_1.png");
-    loadTexture("normal_west_2", "../Assets/enemies/normal_enemy_left_2.png");
+    // Use East textures for West (will be flipped in sprite rendering)
+    loadTexture("normal_west_1", "../Assets/enemies/normal_enemy_right_1.png");
+    loadTexture("normal_west_2", "../Assets/enemies/normal_enemy_right_2.png");
 
     //fast enemies
     loadTexture("fast_north_1", "../Assets/enemies/fast_enemy_up_1.png");
@@ -103,8 +104,9 @@ void AssetManager::loadAllAssets() {
     loadTexture("fast_south_2", "../Assets/enemies/fast_enemy_down_2.png");
     loadTexture("fast_east_1", "../Assets/enemies/fast_enemy_right_1.png");
     loadTexture("fast_east_2", "../Assets/enemies/fast_enemy_right_2.png");
-    loadTexture("fast_west_1", "../Assets/enemies/fast_enemy_left_1.png");
-    loadTexture("fast_west_2", "../Assets/enemies/fast_enemy_left_2.png");
+    // Use East textures for West (will be flipped in sprite rendering)
+    loadTexture("fast_west_1", "../Assets/enemies/fast_enemy_right_1.png");
+    loadTexture("fast_west_2", "../Assets/enemies/fast_enemy_right_2.png");
 
     //tank enemies
     loadTexture("tank_north_1", "../Assets/enemies/tank_enemy_up_1.png");
@@ -113,8 +115,9 @@ void AssetManager::loadAllAssets() {
     loadTexture("tank_south_2", "../Assets/enemies/tank_enemy_down_2.png");
     loadTexture("tank_east_1", "../Assets/enemies/tank_enemy_right_1.png");
     loadTexture("tank_east_2", "../Assets/enemies/tank_enemy_right_2.png");
-    loadTexture("tank_west_1", "../Assets/enemies/tank_enemy_left_1.png");
-    loadTexture("tank_west_2", "../Assets/enemies/tank_enemy_left_2.png");
+    // Use East textures for West (will be flipped in sprite rendering)
+    loadTexture("tank_west_1", "../Assets/enemies/tank_enemy_right_1.png");
+    loadTexture("tank_west_2", "../Assets/enemies/tank_enemy_right_2.png");
     
     
     // Load explosion pngs

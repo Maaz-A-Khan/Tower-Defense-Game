@@ -22,29 +22,29 @@ UIManager::UIManager(sf::Font& font) {
     float textX = uiX + 50.f;  // 20px padding inside panel
 
     // Setup money text
-    moneyText->setCharacterSize(20);
+    moneyText->setCharacterSize(30);
     moneyText->setFillColor(sf::Color::Yellow);
-    moneyText->setPosition({textX + 30.f, 78.f});
+    moneyText->setPosition({textX + 30.f, 63.f});
 
     // Setup lives text
-    livesText->setCharacterSize(20);
+    livesText->setCharacterSize(30);
     livesText->setFillColor(sf::Color::Red);
-    livesText->setPosition({textX, 146.f});
+    livesText->setPosition({textX, 131.f});
 
     // Setup wave text
-    waveText->setCharacterSize(20);
+    waveText->setCharacterSize(30);
     waveText->setFillColor(sf::Color::Cyan);
-    waveText->setPosition({textX, 210.f});
+    waveText->setPosition({textX, 195.f});
 
     // Setup selected tower text
     selectedTowerText->setCharacterSize(18);
     selectedTowerText->setFillColor(sf::Color::White);
-    selectedTowerText->setPosition({textX, 280.f});
+    selectedTowerText->setPosition({textX, 275.f});
 
     // Setup instructions text
-    instructionsText->setCharacterSize(16);
+    instructionsText->setCharacterSize(24);
     instructionsText->setFillColor(sf::Color(200, 200, 200));
-    instructionsText->setPosition({textX, 370.f});
+    instructionsText->setPosition({textX, 355.f});
     instructionsText->setString("Controls:\n1-4: Select Tower\nSpace: Start Wave\nEsc: Pause");
 
     // Setup tower preview shape
