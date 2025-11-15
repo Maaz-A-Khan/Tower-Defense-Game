@@ -55,7 +55,12 @@ void AssetManager::loadAllAssets() {
     std::cout << "\n=== Loading All Assets ===" << std::endl;
     
     // Load fonts
+    
     loadFont("main_font", "C:/Windows/Fonts/arial.ttf");
+    
+    loadTexture("menu_background", "../Assets/ui/menu_background.png");
+    loadTexture("start_button", "../Assets/ui/start_button.png");
+    loadTexture("exit_button", "../Assets/ui/exit_button.png");
     
     loadTexture("ui_panel", "../Assets/sidebar/sidebar.png");
 

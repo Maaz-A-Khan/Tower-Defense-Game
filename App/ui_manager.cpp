@@ -19,7 +19,7 @@ UIManager::UIManager(sf::Font& font) {
     uiPanelBackground.setOutlineColor(sf::Color(100, 100, 100));
     uiPanelBackground.setOutlineThickness(2.f);
 
-    float textX = uiX + 60.f;  // 20px padding inside panel
+    float textX = uiX + 50.f;  // 20px padding inside panel
 
     // Setup money text
     moneyText->setCharacterSize(20);
