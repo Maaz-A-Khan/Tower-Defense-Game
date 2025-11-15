@@ -23,6 +23,13 @@ GameManager::GameManager()
     if (assetManager.hasTexture("grid_tile")) {
         grid.setTexture(assetManager.getTexture("grid_tile"));
     }
+    if (assetManager.hasTexture("start_tile")) {
+        grid.setStartTexture(assetManager.getTexture("start_tile"));
+    }
+
+    if (assetManager.hasTexture("end_tile")) {
+        grid.setEndTexture(assetManager.getTexture("end_tile"));
+    }
 
     // Set start/end points for pathfinding
     grid.setStartEnd({0, GRID_HEIGHT / 2}, {GRID_WIDTH - 1, GRID_HEIGHT / 2});

@@ -59,6 +59,8 @@ void AssetManager::loadAllAssets() {
     
     // Load grid texture
     loadTexture("grid_tile", "../Assets/grid/grid.png.png");
+    loadTexture("start_tile", "../Assets/grid/start-point.png");
+    loadTexture("end_tile", "../Assets/grid/end-point.png");
     
     // Load tower textures (if you create them later)
     loadTexture("gatling_tower_base", "../Assets/towers/gatling-base.png");
@@ -69,7 +71,7 @@ void AssetManager::loadAllAssets() {
     loadTexture("artillery_tower_base", "../Assets/towers/artillery-base.png");
     loadTexture("artillery_tower_shooter", "../Assets/towers/artillery-shooter.png");
 
-    // loadTexture("barrier_tower", "../Assets/towers/barrier.png");
+    loadTexture("barrier_tower", "../Assets/towers/barrier.png");
     
     // Load projectile textures
     loadTexture("gatling_bullet", "../Assets/bullets/gatling.png");
@@ -81,7 +83,7 @@ void AssetManager::loadAllAssets() {
     // loadTexture("tank_enemy", "../Assets/enemies/tank.png");
     // loadTexture("shield_enemy", "../Assets/enemies/shield.png");
     
-    // In loadAllAssets():
+    // Load explosion pngs
     loadTexture("explosion1", "../Assets/grid/explosion-1.png");
     loadTexture("explosion2", "../Assets/grid/explosion-2.png");
     loadTexture("explosion3", "../Assets/grid/explosion-3.png");
